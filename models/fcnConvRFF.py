@@ -56,7 +56,7 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,**kwargs):
     x =  layers.BatchNormalization()(x)
     x =  DefaultPooling()(x) # 8x8 -> 4x4
 
-    x = DefaultConvRFF(1)(x) 
+    x = DefaultConvRFF(phi_units)(x) 
 
     x = level_3 = DefaultTranspConv(1,kernel_size=4,use_bias=False)(x)
     x = DefaultConv2D(1,kernel_size=1,activation=None)(level_2)
