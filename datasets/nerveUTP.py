@@ -34,11 +34,8 @@ def preprocessing_mask(mask):
   return mask
 
 
-def get_data():
+def get_data(seed = 1993, batch_size = 32,height,width =(256,256)):
 
-    seed = 1993
-    batch_size = 32
-    height,width = 256,256
 
     destination_path = os.path.dirname(__file__)
     destination_path = os.path.join(destination_path,'nerviosUTP')
@@ -144,7 +141,7 @@ def get_data():
 
 
 
-    return train_gen, val_gen, test_gen 
+    return train_gen, val_gen, test_gen, len(df_train_images) 
 
 
 
