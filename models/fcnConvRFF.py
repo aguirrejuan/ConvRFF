@@ -3,7 +3,7 @@ from tensorflow.keras import layers
 from tensorflow.keras import Model
 from tensorflow.keras import regularizers
 
-from .convRFF import ConvRFF
+from .convRFF import ConvRFF, RFF
 from functools import partial
 
 DefaultConv2D = partial(layers.Conv2D,
@@ -24,7 +24,8 @@ DefaultTranspConv = partial(layers.Conv2DTranspose,
                             use_bias=False, activation='relu')
 
 
-def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,out_channels=1,**kwargs):
+
+def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,out_channels=1,cRFF=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=(128,128,3))
@@ -56,7 +57,7 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,out_channels
     x =  layers.BatchNormalization()(x)
     x =  DefaultPooling()(x) # 8x8 -> 4x4
 
-    x = DefaultConvRFF(phi_units)(x) 
+    x = DefaultConvRFF(phi_units)(x) if cRFF else  RFF(x,input_shape[0],input_shape[1],phi_units,32)
 
     x = level_3 = DefaultTranspConv(out_channels,kernel_size=4,use_bias=False)(x)
     x = DefaultConv2D(out_channels,kernel_size=1,activation=None)(level_2)
@@ -73,7 +74,7 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,out_channels
     x = DefaultTranspConv(1,kernel_size=16,strides=8,activation='sigmoid',use_bias=True)(x)
 
 
-    model = Model(input,x)
+    model = Model(input,x,name=name)
 
     return model 
 

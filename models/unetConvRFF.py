@@ -3,7 +3,7 @@ from tensorflow.keras import layers
 from tensorflow.keras import Model
 from tensorflow.keras import regularizers
 
-from .convRFF import ConvRFF
+from .convRFF import ConvRFF, RFF
 from functools import partial
 
 DefaultConv2D = partial(layers.Conv2D,
@@ -21,7 +21,7 @@ DefaultConvRFF = partial(ConvRFF,
 upsample = partial(layers.UpSampling2D, (2,2))
 
 
-def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,**kwargs):
+def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64, cRFF=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=input_shape)
@@ -54,7 +54,7 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,**kwargs):
     x =  DefaultPooling()(x) # 16x16 -> 8x8
 
 
-    x = DefaultConvRFF(phi_units)(x)
+    x = DefaultConvRFF(phi_units)(x) if cRFF else  RFF(x,input_shape[0],input_shape[1],phi_units,16)
 
 
     #Decoder
@@ -94,7 +94,7 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,**kwargs):
 
     x = DefaultConv2D(1,kernel_size=(1,1),activation='sigmoid')(x)
 
-    model = Model(input,x)
+    model = Model(input,x,name=name)
 
     return model 
 
