@@ -119,5 +119,5 @@ class ConvRFF(tf.keras.layers.Layer):
 
 def RFF(x,height,width,phi_units,scale):
     flatten = tf.keras.layers.Flatten()(x)
-    rff = tf.keras.layers.RandomFourierFeatures(output_dim=int(height/scale)*int(width/scale)*phi_units,trainable=True,name = 'Phi')(flatten)
+    rff = tf.keras.layers.experimental.RandomFourierFeatures(output_dim=int(height/scale)*int(width/scale)*phi_units,trainable=True,name = 'Phi')(flatten)
     return tf.keras.layers.Reshape((int(height/scale),int(width/scale),-1))(rff)
