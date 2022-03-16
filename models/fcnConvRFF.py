@@ -3,7 +3,7 @@ from tensorflow.keras import layers
 from tensorflow.keras import Model
 from tensorflow.keras import regularizers
 
-from convRFF import ConvRFF
+from .convRFF import ConvRFF
 from functools import partial
 
 DefaultConv2D = partial(layers.Conv2D,

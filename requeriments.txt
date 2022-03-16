@@ -1,4 +1,4 @@
 gdown==4.3.0
-pandas==1.4.1
-sklearn==0.0
-tensorflow==2.8.0
+pandas
+sklearn
+tensorflow
