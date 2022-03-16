@@ -34,7 +34,7 @@ def preprocessing_mask(mask):
   return mask
 
 
-def get_data(seed = 1993, batch_size = 32,height,width =(256,256)):
+def get_data(seed = 1993, batch_size = 32,height=256,width =256):
 
 
     destination_path = os.path.dirname(__file__)
@@ -141,7 +141,7 @@ def get_data(seed = 1993, batch_size = 32,height,width =(256,256)):
 
 
 
-    return train_gen, val_gen, test_gen, len(df_train_images) 
+    return train_gen, val_gen, test_gen, len(df_train_images), len(df_val_images)
 
 
 
