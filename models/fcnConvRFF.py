@@ -24,7 +24,7 @@ DefaultTranspConv = partial(layers.Conv2DTranspose,
                             use_bias=False, activation='relu')
 
 
-def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,**kwargs):
+def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,out_channels=1,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=(128,128,3))
@@ -58,15 +58,15 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,**kwargs):
 
     x = DefaultConvRFF(phi_units)(x) 
 
-    x = level_3 = DefaultTranspConv(1,kernel_size=4,use_bias=False)(x)
-    x = DefaultConv2D(1,kernel_size=1,activation=None)(level_2)
+    x = level_3 = DefaultTranspConv(out_channels,kernel_size=4,use_bias=False)(x)
+    x = DefaultConv2D(out_channels,kernel_size=1,activation=None)(level_2)
 
 
     x =  layers.Add()([x,level_3])
 
     
-    x = level_4 = DefaultTranspConv(1,kernel_size=4,use_bias=False)(x)
-    x = DefaultConv2D(1,kernel_size=1,activation=None)(level_1)
+    x = level_4 = DefaultTranspConv(out_channels,kernel_size=4,use_bias=False)(x)
+    x = DefaultConv2D(out_channels,kernel_size=1,activation=None)(level_1)
 
     x =  layers.Add()([x,level_4])
 
