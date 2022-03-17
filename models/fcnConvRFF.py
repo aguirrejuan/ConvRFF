@@ -25,7 +25,7 @@ DefaultTranspConv = partial(layers.Conv2DTranspose,
 
 
 
-def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,out_channels=1,cRFF=True,**kwargs):
+def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,out_channels=1,cRFF=True,trainable_scale=True, trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=(128,128,3))
@@ -57,7 +57,7 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',phi_units=2,out_channels
     x =  layers.BatchNormalization()(x)
     x =  DefaultPooling()(x) # 8x8 -> 4x4
 
-    x = DefaultConvRFF(phi_units)(x) if cRFF else  RFF(x,input_shape[0],input_shape[1],phi_units,32)
+    x = DefaultConvRFF(phi_units,trainable_scale=trainable_scale, trainable_W=trainable_W)(x) if cRFF else  RFF(x,input_shape[0],input_shape[1],phi_units,32,trainable=trainable_scale)
 
     x = level_3 = DefaultTranspConv(out_channels,kernel_size=4,use_bias=False)(x)
     x = DefaultConv2D(out_channels,kernel_size=1,activation=None)(level_2)

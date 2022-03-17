@@ -14,14 +14,14 @@ DefaultPooling = partial(layers.MaxPool2D,
 
 DefaultConvRFF = partial(ConvRFF,
                         kernel_size=3, padding="SAME",
-                         kernel_regularizer = regularizers.l2(1e-4),
+                        kernel_regularizer = regularizers.l2(1e-4),
                         trainable_scale=True, trainable_W=True,
                          )
 
 upsample = partial(layers.UpSampling2D, (2,2))
 
 
-def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64, cRFF=True,**kwargs):
+def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64, cRFF=True,trainable_scale=True, trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=input_shape)
@@ -54,7 +54,7 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64, cRFF=True
     x =  DefaultPooling()(x) # 16x16 -> 8x8
 
 
-    x = DefaultConvRFF(phi_units)(x) if cRFF else  RFF(x,input_shape[0],input_shape[1],phi_units,16)
+    x = DefaultConvRFF(phi_units,trainable_scale=trainable_scale, trainable_W=trainable_W)(x) if cRFF else  RFF(x,input_shape[0],input_shape[1],phi_units,16,trainable=trainable_scale)
 
 
     #Decoder
