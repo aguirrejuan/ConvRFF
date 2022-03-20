@@ -26,7 +26,7 @@ class ConvRFF(tf.keras.layers.Layer):
                  padding='VALID',
                  stride=1,
                  kernel_regularizer=None,
-                 normalization=True
+                 normalization=True,
                  **kwargs):
         
         super(ConvRFF,self).__init__(**kwargs)
