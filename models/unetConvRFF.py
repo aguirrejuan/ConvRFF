@@ -21,7 +21,8 @@ DefaultConvRFF = partial(ConvRFF,
 upsample = partial(layers.UpSampling2D, (2,2))
 
 
-def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='SAME', kernel_regularizer=regularizers.l2(1e-4), cRFF=True,trainable_scale=True,kernel_size=3, trainable_W=True,**kwargs):
+
+def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='SAME', normalization=False,kernel_regularizer=regularizers.l2(1e-4), cRFF=True,trainable_scale=True,kernel_size=3, trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=input_shape)
@@ -55,7 +56,18 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='S
 
 
     scale = 16
-    x = DefaultConvRFF(phi_units,trainable_scale=trainable_scale,padding=padding,kernel_regularizer=kernel_regularizer,kernel_size=kernel_size, trainable_W=trainable_W)(x) if cRFF else  RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale)
+    
+    if cRFF:
+        x = DefaultConvRFF(phi_units,
+                            trainable_scale=trainable_scale,
+                            padding=padding,
+                            kernel_regularizer=kernel_regularizer,
+                            normalization=normalization,
+                            kernel_size=kernel_size, 
+                            trainable_W=trainable_W)(x) 
+    else:
+        x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale)
+
     x = layers.Reshape((int(input_shape[0]/scale),int(input_shape[1]/scale),-1))(x)
 
     #Decoder

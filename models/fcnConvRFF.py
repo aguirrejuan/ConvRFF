@@ -24,7 +24,7 @@ DefaultTranspConv = partial(layers.Conv2DTranspose,
 
 
 
-def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regularizers.l2(1e-4),phi_units=2,out_channels=1,cRFF=True,padding='SAME',kernel_size=3,trainable_scale=True, trainable_W=True,**kwargs):
+def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regularizers.l2(1e-4),normalization=False,phi_units=2,out_channels=1,cRFF=True,padding='SAME',kernel_size=3,trainable_scale=True, trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=(128,128,3))
@@ -57,7 +57,17 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regul
     x =  DefaultPooling()(x) # 8x8 -> 4x4
 
     scale = 32
-    x = DefaultConvRFF(phi_units,trainable_scale=trainable_scale,kernel_regularizer=kernel_regularizer,kernel_size=kernel_size,padding=padding, trainable_W=trainable_W)(x) if cRFF else  RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale)
+    if cRFF:
+        x = DefaultConvRFF(phi_units,
+                            trainable_scale=trainable_scale,
+                            normalization=normalization,
+                            kernel_regularizer=kernel_regularizer,
+                            kernel_size=kernel_size,
+                            padding=padding,
+                            trainable_W=trainable_W)(x) 
+    else:
+        x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale)
+
     x = layers.Reshape((int(input_shape[0]/scale),int(input_shape[1]/scale),-1))(x)
 
     x = level_3 = DefaultTranspConv(out_channels,kernel_size=4,use_bias=False)(x)

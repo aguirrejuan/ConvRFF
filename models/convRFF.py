@@ -26,6 +26,7 @@ class ConvRFF(tf.keras.layers.Layer):
                  padding='VALID',
                  stride=1,
                  kernel_regularizer=None,
+                 normalization=True
                  **kwargs):
         
         super(ConvRFF,self).__init__(**kwargs)
@@ -39,6 +40,7 @@ class ConvRFF(tf.keras.layers.Layer):
         self.stride = stride
         self.initializer = kernel
         self.kernel_regularizer = kernel_regularizer
+        self.normalization = normalization
 
     def get_config(self):
 
@@ -51,6 +53,7 @@ class ConvRFF(tf.keras.layers.Layer):
             'trainable_W':self.trainable_W,
             'padding':self.padding,
             'kernel':self.initializer,
+            'normalization':self.normalization
         })
         return config
 
@@ -112,7 +115,7 @@ class ConvRFF(tf.keras.layers.Layer):
                                padding=self.padding)
         outputs = tf.nn.bias_add(outputs,self.bias)
 
-        outputs = tf.cos(outputs)*tf.math.sqrt(2/self.output_dim)
+        outputs = tf.cos(outputs)*tf.math.sqrt(2/self.output_dim) if self.normalization else tf.cos(outputs)
         return outputs
 
     
