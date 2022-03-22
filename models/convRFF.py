@@ -80,8 +80,8 @@ class ConvRFF(tf.keras.layers.Layer):
             name='bias',
             shape=(self.output_dim,),
             dtype=tf.float32,
-            initializer=tf.random_normal_initializer(
-                mean=0.0,stddev=2*np.pi),
+            initializer=tf.random_uniform_initializer(
+                minval=0.0,maxval=2*np.pi),
             trainable=self.trainable_W
         )
 
@@ -106,7 +106,7 @@ class ConvRFF(tf.keras.layers.Layer):
 
     def call(self,inputs):
 
-        scale = tf.math.divide(1.0,  self.kernel_scale)
+        scale = tf.math.divide(1.0, self.kernel_scale)
 
         kernel = tf.math.multiply(scale,self.kernel)
 
@@ -115,7 +115,7 @@ class ConvRFF(tf.keras.layers.Layer):
                                padding=self.padding)
         outputs = tf.nn.bias_add(outputs,self.bias)
 
-        outputs = tf.cos(outputs)*tf.math.sqrt(2/self.output_dim) if self.normalization else tf.cos(outputs)
+        outputs = tf.math.multiply(tf.math.sqrt(2/self.output_dim),tf.cos(outputs)) if self.normalization else tf.cos(outputs)
         return outputs
 
     
