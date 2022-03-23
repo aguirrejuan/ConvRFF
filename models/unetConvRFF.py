@@ -62,10 +62,10 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='S
     if cRFF:
         x = DefaultConvRFF(phi_units,
                             trainable_scale=trainable_scale,
-                            padding=padding,
-                            kernel_regularizer=kernel_regularizer,
                             normalization=normalization,
+                            kernel_regularizer=kernel_regularizer,
                             kernel_size=kernel_size, 
+                            padding=padding,
                             trainable_W=trainable_W)(x) 
     else:
         x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale)

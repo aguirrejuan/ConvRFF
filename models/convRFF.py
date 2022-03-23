@@ -87,7 +87,7 @@ class ConvRFF(tf.keras.layers.Layer):
 
         if not self.scale:
             if  self.initializer == 'gaussian':
-                self.scale = np.sqrt((self.kernel_size**2+input_dim)/2.0)
+                self.scale = np.sqrt((input_dim*self.kernel_size**2)/2.0)
             elif self.initializer == 'laplacian':
                 self.scale = 1.0
             else: 
