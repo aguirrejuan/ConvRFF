@@ -64,8 +64,8 @@ def get_data(seed = 1993, batch_size = 32,height=256,width =256):
 
     df = pd.DataFrame({'filepath':filepath_image,'nerve_name':nerve_name,'mask':filepath_mask})
     t = df['nerve_name']
-    df_train_images,df_test_images,t_train,_ = train_test_split(df,t, test_size=0.2,stratify = t)
-    df_train_images,df_val_images,_,_ = train_test_split(df_train_images,t_train, test_size=0.2,stratify = t_train)
+    df_train_images,df_test_images,t_train,_ = train_test_split(df,t, test_size=0.2,stratify = t,random_state=seed)
+    df_train_images,df_val_images,_,_ = train_test_split(df_train_images,t_train, test_size=0.2,stratify = t_train,random_state=seed)
 
     
     image_datagen = ImageDataGenerator(rotation_range=10,
