@@ -24,7 +24,7 @@ upsample = partial(layers.UpSampling2D, (2,2))
 def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
-def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='SAME', normalization=False,kernel_regularizer=regularizers.l2(1e-4), cRFF=True,trainable_scale=True,kernel_size=3, trainable_W=True,**kwargs):
+def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='SAME', normalization=False,kernel_regularizer=regularizers.l2(1e-4), type_layer='cRFF',trainable_scale=True,kernel_size=3, trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=input_shape)
@@ -59,7 +59,7 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='S
 
     scale = 16
     
-    if cRFF:
+    if type_layer=='cRFF':
         x = DefaultConvRFF(phi_units,
                             trainable_scale=trainable_scale,
                             normalization=normalization,
@@ -67,8 +67,12 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='S
                             kernel_size=kernel_size, 
                             padding=padding,
                             trainable_W=trainable_W)(x) 
-    else:
+    elif type_layer == 'RFF':
         x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale)
+    
+    else:
+        x = x 
+        
 
     x = layers.Reshape((int(input_shape[0]/scale),int(input_shape[1]/scale),-1))(x)
 

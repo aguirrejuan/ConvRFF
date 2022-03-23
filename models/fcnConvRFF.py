@@ -28,7 +28,7 @@ DefaultTranspConv = partial(layers.Conv2DTranspose,
 def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
-def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regularizers.l2(1e-4),normalization=False,phi_units=2,out_channels=1,cRFF=True,padding='SAME',kernel_size=3,trainable_scale=True, trainable_W=True,**kwargs):
+def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regularizers.l2(1e-4),normalization=False,phi_units=2,out_channels=1,type_layer='cRFF',padding='SAME',kernel_size=3,trainable_scale=True, trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=(128,128,3))
@@ -61,7 +61,7 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regul
     x =  DefaultPooling()(x) # 8x8 -> 4x4
 
     scale = 32
-    if cRFF:
+    if type_layer == 'cRFF':
         x = DefaultConvRFF(phi_units,
                             trainable_scale=trainable_scale,
                             normalization=normalization,
@@ -69,8 +69,10 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regul
                             kernel_size=kernel_size,
                             padding=padding,
                             trainable_W=trainable_W)(x) 
-    else:
+    elif type_layer=='RFF':
         x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale)
+    else: 
+        x = x 
 
     x = layers.Reshape((int(input_shape[0]/scale),int(input_shape[1]/scale),-1))(x)
 
