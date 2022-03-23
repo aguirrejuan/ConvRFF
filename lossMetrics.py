@@ -30,24 +30,17 @@ def iou_np(mask,mask_est,smooth=1):
   sum__ = np.sum(mask) + np.sum(mask_est)
   return (inter + smooth)/(sum__ - inter + smooth)
 
+
 def sensitivity(y_true, y_pred):
-    s = K.sum(y_true, axis=(1,2,3))
-    y_true_c = s / (s + K.epsilon())
-    s_ = K.sum(y_pred, axis=(1,2,3))
-    y_pred_c = s_ / (s_ + K.epsilon())
+    y_true = tf.cast(y_true > 0.5,tf.float32)
+    y_pred = tf.cast(y_pred > 0.5 ,tf.float32)
+    
+    true_positves = K.sum(y_true*y_pred,axis=[1,2,3])
+    total_positives = K.sum(y_true,axis=[1,2,3])
    
-    true_positives = K.sum(K.round(K.clip(y_true_c * y_pred_c, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true_c, 0, 1)))
-    return true_positives / (possible_positives + K.epsilon())
+    return tf.reduce_mean(true_positves / (total_positives + K.epsilon()))
 
 def specificity(y_true, y_pred):
-    s = K.sum(y_true, axis=(1,2,3))
-    y_true_c = s / (s + K.epsilon())
-    s_ = K.sum(y_pred, axis=(1,2,3))
-    y_pred_c = s_ / (s_ + K.epsilon())
-    
-    true_negatives = K.sum(K.round(K.clip((1-y_true_c) * (1-y_pred_c), 0, 1)))#123456789
-# path = "./ImagenesNervios/data/"data_image = [] data_mask = glob(path + '*_mask*') for i in data_mask:  data_image.append(i.replace('_mask', '')) print("Cantidad total de datos:",len(data_image))
-
-    possible_negatives = K.sum(K.round(K.clip(1-y_true_c, 0, 1)))
-    return true_negatives / (possible_negatives + K.epsilon())
+    y_true = tf.cast(y_true < 0.5,tf.float32)
+    y_pred = tf.cast(y_pred < 0.5 ,tf.float32)
+    return sensitivity(y_true,y_pred)
