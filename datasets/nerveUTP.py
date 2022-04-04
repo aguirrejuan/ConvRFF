@@ -29,40 +29,44 @@ def download(destination_path):
     unzip(output,destination_path)
 
 def preprocessing_mask(mask):
-  mask[mask > 0.5] = 255
-  mask[mask <= 0.5] = 0
-  return mask
+	mask[mask > 0.5] = 255
+	mask[mask <= 0.5] = 0
+	return mask
+
+
+def get_dataframe():
+	destination_path = os.path.dirname(__file__)
+	destination_path = os.path.join(destination_path,'nerviosUTP')
+	download(destination_path)
+	destination_path = os.path.join(destination_path,'ImagenesNervios_')
+	file_images = glob(os.path.join(destination_path,'*.png'))
+	file_images.sort()
+	filepath_image = [] # sólo imagenes
+	filepath_mask = [] # mascaras
+	nerve_name = []
+	for filepath in [filepath_ for filepath_ in file_images if 'mask' not in filepath_]:
+		mask = filepath[:-4]+'_mask.png'
+		if mask in file_images:
+			filepath_image.append(filepath)
+			filepath_mask.append(mask)
+			if 'ciatico' in filepath:
+				nerve_name.append('ciatico')
+			elif 'cubital' in filepath:
+				nerve_name.append('cubital')
+			elif 'femoral' in filepath:
+				nerve_name.append('femoral')
+			elif 'mediano' in filepath:
+				nerve_name.append('mediano')
+	df = pd.DataFrame({'filepath':filepath_image,'nerve_name':nerve_name,'mask':filepath_mask})
+	return df 
+
 
 
 def get_data(seed = 1993, batch_size = 32,height=256,width =256):
-
-
-    destination_path = os.path.dirname(__file__)
-    destination_path = os.path.join(destination_path,'nerviosUTP')
-    download(destination_path)
-    destination_path = os.path.join(destination_path,'ImagenesNervios_')
-
-    file_images = glob(os.path.join(destination_path,'*.png'))
-    file_images.sort()
-    filepath_image = [] # sólo imagenes
-    filepath_mask = [] # mascaras
-    nerve_name = []
-    for filepath in [filepath_ for filepath_ in file_images if 'mask' not in filepath_]:
-      mask = filepath[:-4]+'_mask.png'
-      if mask in file_images:
-        filepath_image.append(filepath)
-        filepath_mask.append(mask)
-
-        if 'ciatico' in filepath:
-          nerve_name.append('ciatico')
-        elif 'cubital' in filepath:
-          nerve_name.append('cubital')
-        elif 'femoral' in filepath:
-          nerve_name.append('femoral')
-        elif 'mediano' in filepath:
-          nerve_name.append('mediano')
-
-    df = pd.DataFrame({'filepath':filepath_image,'nerve_name':nerve_name,'mask':filepath_mask})
+    """
+    Function for replicating Cristian's experiment
+    """
+    df = get_dataframe()
     t = df['nerve_name']
     df_train_images,df_test_images,t_train,_ = train_test_split(df,t, test_size=0.2,stratify = t,random_state=seed)
     df_train_images,df_val_images,_,_ = train_test_split(df_train_images,t_train, test_size=0.2,stratify = t_train,random_state=seed)
@@ -142,6 +146,8 @@ def get_data(seed = 1993, batch_size = 32,height=256,width =256):
 
 
     return train_gen, val_gen, test_gen, len(df_train_images), len(df_val_images)
+
+
 
 
 
