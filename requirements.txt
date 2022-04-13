@@ -2,3 +2,5 @@ gdown==4.3.0
 pandas
 sklearn
 tensorflow
+tf-keras-vis
+scikit-image
