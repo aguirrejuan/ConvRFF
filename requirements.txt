@@ -3,4 +3,4 @@ pandas
 sklearn
 tensorflow
 tf-keras-vis
-scikit-image
+scikit-imagematplotlib
