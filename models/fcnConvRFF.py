@@ -75,7 +75,7 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regul
     else: 
         x = x 
 
-    x = layers.Reshape((int(input_shape[0]/scale),int(input_shape[1]/scale),-1))(x)
+    x = layers.Reshape((int(input_shape[0]/scale),int(input_shape[1]/scale),-1),name='Reshape')(x)
 
     x = level_3 = DefaultTranspConv(out_channels,kernel_size=4,use_bias=False, kernel_initializer=kernel_initializer(98),name='Trans60')(x)
     x = DefaultConv2D(out_channels,kernel_size=1,activation=None,kernel_initializer=kernel_initializer(75),name='Conv60')(level_2)
