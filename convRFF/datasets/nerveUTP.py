@@ -2,10 +2,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 import pandas as pd
 
-
 import os
 from glob import glob 
-
 
 import gdown
 import zipfile
@@ -146,7 +144,6 @@ def get_data(seed = 1993, batch_size = 32,height=256,width =256):
 
 
     return train_gen, val_gen, test_gen, len(df_train_images), len(df_val_images)
-
 
 
 

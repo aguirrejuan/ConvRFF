@@ -15,8 +15,6 @@ from skimage import segmentation
 
 
 
-
-
 def _custom_layer(target_class):
     def compute(pred):
         mask = tf.cast(pred > 0.5,tf.float32) if target_class == 1 else -tf.cast(pred <= 0.5,tf.float32) 
@@ -88,7 +86,7 @@ class SegXAI:
 
 
     def plot(self,cam,nrows=3, ncols=5,figsize=(25, 20)):
-        f, ax = plt.subplots(nrows, ncols, figsize)
+        f, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
         ax = ax.ravel()
         pad_masks = np.zeros_like(self.pred_masks)
         pad_masks[:,1:-1,1:-1,:] = self.pred_masks[:,1:-1,1:-1,:]
@@ -105,17 +103,19 @@ class SegXAI:
         plt.show()
 
 
-def load_data():
+def load_data(number_samples=15):
     from convRFF.models.load_model import load_model
     from convRFF.datasets.nerveUTP import get_data
-    TRAIN, VAL, TEST, TOTAL_TRAINING,TOTAL_VALIDATION = get_data(batch_size=15,height=128,width =128)
+    TRAIN, VAL, TEST, TOTAL_TRAINING,TOTAL_VALIDATION = get_data(batch_size=number_samples,height=128,width =128)
     for imgs,masks in TEST:
         break
         
     return imgs,masks
     
 
+
 if __name__ == "__main__":
+    from convRFF.models.load_model import load_model
     data,masks = load_data()
 
     model = load_model()

@@ -23,7 +23,11 @@ upsample = partial(layers.UpSampling2D, (2,2))
 def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
-def get_model(input_shape=(128,128,3),name='UnetConvRFF',phi_units=64,padding='SAME', normalization=False,kernel_regularizer=regularizers.l2(1e-4), type_layer='cRFF',trainable_scale=True,kernel_size=3, trainable_W=True,**kwargs):
+def get_model(input_shape=(128,128,3),name='UnetConvRFF',
+                phi_units=64,padding='SAME', 
+                normalization=False,kernel_regularizer=regularizers.l2(1e-4), 
+                type_layer='cRFF',trainable_scale=True,
+                kernel_size=3, trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=input_shape)

@@ -6,6 +6,7 @@ import tensorflow as tf
 from convRFF.models.convRFF import ConvRFF, RFF
 from functools import partial
 
+
 DefaultConv2D = partial(layers.Conv2D,
                         kernel_size=3, activation='relu', padding="same")
 
@@ -28,7 +29,12 @@ DefaultTranspConv = partial(layers.Conv2DTranspose,
 def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
-def get_model(input_shape=(128,128,3),name='FCNConvRFF',kernel_regularizer=regularizers.l2(1e-4),normalization=False,phi_units=2,out_channels=1,type_layer='cRFF',padding='SAME',kernel_size=3,trainable_scale=True, trainable_W=True,**kwargs):
+
+def get_model(input_shape=(128,128,3),name='FCNConvRFF',
+                kernel_regularizer=regularizers.l2(1e-4),
+                normalization=False,phi_units=2,out_channels=1,
+                type_layer='cRFF',padding='SAME',kernel_size=3,
+                trainable_scale=True, trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=(128,128,3))
