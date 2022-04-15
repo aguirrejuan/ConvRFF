@@ -70,12 +70,12 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',
                             kernel_size=kernel_size, 
                             padding=padding,
                             trainable_W=trainable_W,
-                            name='ConvRFF')(x) 
+                            name='RFF')(x) 
     elif type_layer == 'RFF':
-        x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale)
+        x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale,name='RFF')
     
     else:
-        x = x 
+        x = layers.Lambda(lambda x: x,name='RFF')(x)
         
 
     x = layers.Reshape((int(input_shape[0]/scale),int(input_shape[1]/scale),-1),name='Reshape')(x)
