@@ -2,5 +2,5 @@
 
 
 ## TODO 
-1. Add function to save model in each training(google drive)
-2. Train models discussed in the seminar to prove method
+1. Get results on segXAI.py
+2. Figure out how call function from diferent levels in the directory.

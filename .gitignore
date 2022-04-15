@@ -1,6 +1,6 @@
-__pycache__/
+__pycache__
 *.py[cod]
 
 .env 
-datasets/nerviosUTP
+nerviosUTP
 model.h5
