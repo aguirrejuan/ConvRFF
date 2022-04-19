@@ -16,9 +16,9 @@ from skimage import segmentation
 
 
 def _custom_layer(target_class):
-    def compute(outputs):
-        pred = outputs[0]
-        mask = outputs[1]
+    def compute(inputs):
+        pred = inputs[0]
+        mask = inputs[1]
         if target_class == 1:
             mask = mask
         elif target_class == 0:
@@ -32,7 +32,7 @@ class SegXAI:
     def __init__(self,model,data,masks,target_class,layer_name):
         self.target_class  = target_class
         self.masks = masks 
-        self.pred_masks = model.predict(data) > 0.5
+        self.pred_masks = model.predict(data) > 0.5 #just for plotting 
         self.model = self.__addOutputLayer(model)
         self.data = data 
         self.layer_name = layer_name 
@@ -138,12 +138,11 @@ if __name__ == "__main__":
     data,masks = load_data()
 
     model = load_model()
-    segXAI = SegXAI(model, data,masks=masks,target_class=1, layer_name='Trans80')
+    segXAI = SegXAI(model, data,masks=masks,target_class=0, layer_name='Trans60')
 
     cam = segXAI.gradCam()
     #cam = segXAI.gradCamPlusPlus()
     #cam = segXAI.scoreCam()
-    print(cam.shape)
-    print(segXAI.average_drop(cam),segXAI.average_increase(cam))
-
+    
+    print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
     segXAI.plot(cam)
