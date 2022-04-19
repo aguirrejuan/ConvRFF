@@ -64,7 +64,6 @@ class SegXAI:
                   (self.data,self.masks),
                   penultimate_layer=self.layer_name,
                   seek_penultimate_conv_layer=False)
-
         return cam[0]
 
 
@@ -76,7 +75,6 @@ class SegXAI:
                     (self.data,self.masks),
                     penultimate_layer=self.layer_name,
                     seek_penultimate_conv_layer=False)
-
         return cam[0]
 
 
@@ -86,8 +84,24 @@ class SegXAI:
                         (self.data,self.masks),
                         penultimate_layer=self.layer_name,
                         seek_penultimate_conv_layer=False)
-
         return cam[0]
+
+
+    def YcOc(self,cam):
+        cam  = cam[...,None]
+        Y_c = self.model.predict([self.data,self.masks])
+        O_c = self.model.predict([self.data*cam,self.masks])
+        return Y_c,O_c
+
+
+    def average_drop(self,cam):
+        Y_c,O_c = self.YcOc(cam)
+        return np.mean(np.maximum(0,(Y_c-O_c))/Y_c)*100
+    
+
+    def average_increase(self,cam):
+        Y_c,O_c = self.YcOc(cam)
+        return 100*np.sum((Y_c < O_c))/Y_c.size 
 
 
     def plot(self,cam,nrows=3, ncols=5,figsize=(25, 20)):
@@ -124,11 +138,12 @@ if __name__ == "__main__":
     data,masks = load_data()
 
     model = load_model()
-    segXAI = SegXAI(model, data,masks=masks,target_class=0, layer_name='Trans70')
+    segXAI = SegXAI(model, data,masks=masks,target_class=1, layer_name='Trans80')
 
-    #cam = segXAI.gradCam()
+    cam = segXAI.gradCam()
     #cam = segXAI.gradCamPlusPlus()
-    cam = segXAI.scoreCam()
+    #cam = segXAI.scoreCam()
     print(cam.shape)
+    print(segXAI.average_drop(cam),segXAI.average_increase(cam))
 
     segXAI.plot(cam)
