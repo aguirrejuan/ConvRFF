@@ -1,5 +1,5 @@
 import tensorflow as tf 
-from tensorflow.keras.layers import Lambda
+from tensorflow.keras.layers import Lambda, Input
 from tensorflow.keras.models import Model, clone_model
 from tensorflow.keras.activations import sigmoid
 
@@ -16,8 +16,13 @@ from skimage import segmentation
 
 
 def _custom_layer(target_class):
-    def compute(pred):
-        mask = tf.cast(pred > 0.5,tf.float32) if target_class == 1 else -tf.cast(pred <= 0.5,tf.float32) 
+    def compute(outputs):
+        pred = outputs[0]
+        mask = outputs[1]
+        if target_class == 1:
+            mask = mask
+        elif target_class == 0:
+            mask = -1*(1-mask)
         return tf.reduce_mean(mask*pred,axis=[1,2,3])[...,None]
     return compute 
 
@@ -35,14 +40,14 @@ class SegXAI:
 
     def __addOutputLayer(self,model):
         input = model.input
-        
+        input_mask = Input(shape=(None,None,1))
         output_model = model.layers[-1]
         output_model.activation = tf.keras.activations.linear
         output_model = output_model.output
 
-        x = Lambda(_custom_layer(self.target_class),name='Lambda')(output_model)
+        x = Lambda(_custom_layer(self.target_class),name='Lambda')([output_model,input_mask])
         output = x#sigmoid(x)
-        model = Model(input,output)
+        model = Model((input,input_mask),output)
         return model
 
 
@@ -56,11 +61,11 @@ class SegXAI:
                       clone=True)
 
         cam = gradcam(self.score_function,
-                  self.data,
+                  (self.data,self.masks),
                   penultimate_layer=self.layer_name,
                   seek_penultimate_conv_layer=False)
 
-        return cam 
+        return cam[0]
 
 
     def gradCamPlusPlus(self,):
@@ -68,21 +73,21 @@ class SegXAI:
                           model_modifier=ReplaceToLinear(),
                           clone=True)
         cam = gradcam(self.score_function, 
-                    self.data,
+                    (self.data,self.masks),
                     penultimate_layer=self.layer_name,
                     seek_penultimate_conv_layer=False)
 
-        return cam
+        return cam[0]
 
 
     def scoreCam(self,):
         scorecam = Scorecam(self.model)
         cam = scorecam(self.score_function,
-                        self.data,
+                        (self.data,self.masks),
                         penultimate_layer=self.layer_name,
                         seek_penultimate_conv_layer=False)
 
-        return cam 
+        return cam[0]
 
 
     def plot(self,cam,nrows=3, ncols=5,figsize=(25, 20)):
@@ -119,11 +124,11 @@ if __name__ == "__main__":
     data,masks = load_data()
 
     model = load_model()
-    segXAI = SegXAI(model, data,masks=masks,target_class=0, layer_name='Trans60')
+    segXAI = SegXAI(model, data,masks=masks,target_class=0, layer_name='Trans70')
 
     #cam = segXAI.gradCam()
     #cam = segXAI.gradCamPlusPlus()
     cam = segXAI.scoreCam()
-    
+    print(cam.shape)
 
     segXAI.plot(cam)
