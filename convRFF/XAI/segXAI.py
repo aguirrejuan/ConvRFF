@@ -22,7 +22,7 @@ def _custom_layer(target_class):
         if target_class == 1:
             mask = mask
         elif target_class == 0:
-            mask = -1*(1-mask)
+            mask = mask-1
         return tf.reduce_mean(mask*pred,axis=[1,2,3])[...,None]
     return compute 
 
@@ -40,10 +40,10 @@ class SegXAI:
 
     def __addOutputLayer(self,model):
         input = model.input
-        input_mask = Input(shape=(None,None,1))
-        output_model = model.layers[-1]
-        output_model.activation = tf.keras.activations.linear
-        output_model = output_model.output
+        input_mask = Input(shape=(None,None,1),name='Input_mask')
+        last_layer = model.layers[-1]
+        last_layer.activation = tf.keras.activations.linear
+        output_model = last_layer.output
 
         x = Lambda(_custom_layer(self.target_class),name='Lambda')([output_model,input_mask])
         output = x#sigmoid(x)
@@ -79,7 +79,10 @@ class SegXAI:
 
 
     def scoreCam(self,):
-        scorecam = Scorecam(self.model)
+        scorecam = Scorecam(self.model,
+                            model_modifier=ReplaceToLinear(),
+                            clone=True,
+                            )
         cam = scorecam(self.score_function,
                         (self.data,self.masks),
                         penultimate_layer=self.layer_name,
@@ -96,23 +99,29 @@ class SegXAI:
 
     def average_drop(self,cam):
         Y_c,O_c = self.YcOc(cam)
-        return np.mean(np.maximum(0,(Y_c-O_c))/Y_c)*100
+        return np.sum(np.maximum(0,(Y_c-O_c))/Y_c)*100
     
 
     def average_increase(self,cam):
         Y_c,O_c = self.YcOc(cam)
-        return 100*np.sum((Y_c < O_c))/Y_c.size 
+        return 100*np.mean(Y_c < O_c)
 
 
-    def plot(self,cam,nrows=3, ncols=5,figsize=(25, 20)):
+    def plot(self,cam,nrows=3, ncols=5,figsize=(25, 20),_class=0):
         f, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+        f.suptitle(f"Class :{_class}")
+
         ax = ax.ravel()
-        pad_masks = np.zeros_like(self.pred_masks)
-        pad_masks[:,1:-1,1:-1,:] = self.pred_masks[:,1:-1,1:-1,:]
+        pad_pred_masks = np.zeros_like(self.pred_masks)
+        pad_pred_masks[:,1:-1,1:-1,:] = self.pred_masks[:,1:-1,1:-1,:]
+        
+        pad_masks = np.zeros_like(self.masks)
+        pad_masks[:,1:-1,1:-1,:] = self.masks[:,1:-1,1:-1,:]
+
         for i, title in enumerate(np.arange(nrows*ncols)):
             heatmap = np.uint8(cm.jet(cam[i])[..., :3] * 255)
-            contour = segmentation.clear_border(self.masks[i,...,0])
-            pred_contour = segmentation.clear_border(pad_masks[i,...,0])
+            contour = segmentation.clear_border(pad_masks[i,...,0])
+            pred_contour = segmentation.clear_border(pad_pred_masks[i,...,0])
             ax[i].imshow(self.data[i])
             ax[i].imshow(heatmap, cmap='jet', alpha=0.5)
             ax[i].contour(contour,[0.5],colors=['white'])
@@ -128,21 +137,29 @@ def load_data(number_samples=15):
     TRAIN, VAL, TEST, TOTAL_TRAINING,TOTAL_VALIDATION = get_data(batch_size=number_samples,height=128,width =128)
     for imgs,masks in TEST:
         break
-        
     return imgs,masks
-    
+
+def load_catDog(num_examples=15):
+    from convRFF.datasets.catsDogs import get_data 
+    train_batches, test_batches = get_data(num_examples)
+    for imgs,masks in test_batches:
+        break
+    return np.array(imgs),np.array(masks)
 
 
 if __name__ == "__main__":
     from convRFF.models.load_model import load_model
-    data,masks = load_data()
+    data,masks = load_catDog(num_examples=10)
 
-    model = load_model()
-    segXAI = SegXAI(model, data,masks=masks,target_class=0, layer_name='Trans60')
+    model = load_model('/home/juan/Downloads/model.h5')
+    #model.summary()
+    _class = 1
+    segXAI = SegXAI(model, data,masks=masks,target_class=_class, layer_name='conv2d_38') #conv2d_33,conv2d_22
 
-    cam = segXAI.gradCam()
+    #cam = segXAI.gradCam()
     #cam = segXAI.gradCamPlusPlus()
-    #cam = segXAI.scoreCam()
+    cam = segXAI.scoreCam()
     
     print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
-    segXAI.plot(cam)
+    
+    segXAI.plot(cam,nrows=2, ncols=5,_class=_class)
