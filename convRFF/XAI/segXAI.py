@@ -99,7 +99,7 @@ class SegXAI:
 
     def average_drop(self,cam):
         Y_c,O_c = self.YcOc(cam)
-        return np.sum(np.maximum(0,(Y_c-O_c))/Y_c)*100
+        return np.mean(np.maximum(0,(Y_c-O_c))/Y_c)*100
     
 
     def average_increase(self,cam):
@@ -107,9 +107,9 @@ class SegXAI:
         return 100*np.mean(Y_c < O_c)
 
 
-    def plot(self,cam,nrows=3, ncols=5,figsize=(25, 20),_class=0):
+    def plot(self,cam,nrows=2, ncols=5,figsize=(25, 20)):
         f, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
-        f.suptitle(f"Class :{_class}")
+        f.suptitle(f"Class :{self.target_class}")
 
         ax = ax.ravel()
         pad_pred_masks = np.zeros_like(self.pred_masks)

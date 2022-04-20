@@ -9,3 +9,4 @@
 5. Add compatibily with generator for large datasets. 
 6. Build a plot for all methods comparative.
 7. modify score cam to select input 
+8. Inform about the wrong calculation in the notebook
