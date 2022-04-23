@@ -3,7 +3,8 @@ from tensorflow.keras import Model
 from tensorflow.keras import regularizers
 import tensorflow as tf 
 
-from convRFF.models.convRFF import ConvRFF, RFF
+from convRFF.models.convRFF import ConvRFF
+from convRFF.models.RFF import RFF
 from functools import partial
 
 
@@ -104,5 +105,5 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',
 
 
 if __name__ == '__main__':
-    model = get_model()
+    model = get_model(type_layer='RFF')
     model.summary()

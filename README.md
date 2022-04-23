@@ -10,3 +10,4 @@
 6. Build a plot for all methods comparative.
 7. modify score cam to select input 
 8. Inform about the wrong calculation in the notebook
+9. Shutdown activation of layer in the middle   

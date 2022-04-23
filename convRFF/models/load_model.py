@@ -1,5 +1,5 @@
 from tensorflow.keras.models import load_model as ld
-from tensorflow.keras.layers.experimental import RandomFourierFeatures
+from convRFF.models.RFF import RandomFourierFeatures
 from convRFF.models.convRFF import ConvRFF
 from convRFF.lossMetrics.lossMetrics import dice_coef_loss,iou,dice_coef,sensitivity,specificity
 

@@ -24,11 +24,14 @@ upsample = partial(layers.UpSampling2D, (2,2))
 def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
-def get_model(input_shape=(128,128,3),name='UnetConvRFF',
+def get_model(input_shape=(128,128,3),name='UnetConvRFF_Decoder_Encoder',
                 phi_units=64,padding='SAME', 
-                normalization=False,kernel_regularizer=regularizers.l2(1e-4), 
-                type_layer='cRFF',trainable_scale=True,
-                kernel_size=3, trainable_W=True,**kwargs):
+                normalization=False,
+                kernel_regularizer=regularizers.l2(1e-4), 
+                type_layer='cRFF',
+                trainable_scale=True,
+                kernel_size=3, 
+                trainable_W=True,**kwargs):
 
     # Encoder 
     input = layers.Input(shape=input_shape)
@@ -37,26 +40,50 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF',
   
     x =  DefaultConv2D(8,kernel_initializer=kernel_initializer(34),name='Conv10')(x)
     x =  layers.BatchNormalization(name='Batch10')(x)
-    x = level_1 = DefaultConv2D(8,kernel_initializer=kernel_initializer(4),name='Conv11')(x)
+    x = DefaultConv2D(8,kernel_initializer=kernel_initializer(4),name='Conv11')(x)
+    level_1 = DefaultConvRFF(8,trainable_scale=trainable_scale,
+                            normalization=normalization,
+                            kernel_regularizer=kernel_regularizer,
+                            kernel_size=kernel_size, 
+                            padding=padding,
+                            trainable_W=trainable_W,name='ConvRFF10')(x)
     x =  layers.BatchNormalization(name='Batch11')(x)
     x = DefaultPooling()(x) # 128x128 -> 64x64
 
     x =  DefaultConv2D(16,kernel_initializer=kernel_initializer(56),name='Conv20')(x)
     x =  layers.BatchNormalization(name='Batch20')(x)
-    x = level_2 = DefaultConv2D(16,kernel_initializer=kernel_initializer(32),name='Conv21')(x)
+    x = DefaultConv2D(16,kernel_initializer=kernel_initializer(32),name='Conv21')(x)
+    level_2 = DefaultConvRFF(16,trainable_scale=trainable_scale,
+                            normalization=normalization,
+                            kernel_regularizer=kernel_regularizer,
+                            kernel_size=kernel_size, 
+                            padding=padding,
+                            trainable_W=trainable_W,name='ConvRFF20')(x)
     x =  layers.BatchNormalization(name='Batch22')(x)
     x = DefaultPooling()(x) # 64x64 -> 32x32
 
 
     x =  DefaultConv2D(32,kernel_initializer=kernel_initializer(87),name='Conv30')(x)
     x =  layers.BatchNormalization(name='Batch30')(x)
-    x = level_3 = DefaultConv2D(32,kernel_initializer=kernel_initializer(30),name='Conv31')(x)
+    x = DefaultConv2D(32,kernel_initializer=kernel_initializer(30),name='Conv31')(x)
+    level_3 = DefaultConvRFF(32,trainable_scale=trainable_scale,
+                            normalization=normalization,
+                            kernel_regularizer=kernel_regularizer,
+                            kernel_size=kernel_size, 
+                            padding=padding,
+                            trainable_W=trainable_W,name='ConvRFF30')(x)
     x =  layers.BatchNormalization(name='Batch31')(x)
     x = DefaultPooling()(x) # 32x32 -> 16x16
 
     x = DefaultConv2D(64,kernel_initializer=kernel_initializer(79),name='Conv40')(x)
     x =  layers.BatchNormalization(name='Batch40')(x)
-    x = level_4 =  DefaultConv2D(64,kernel_initializer=kernel_initializer(81),name='Conv41')(x)
+    x =  DefaultConv2D(64,kernel_initializer=kernel_initializer(81),name='Conv41')(x)
+    level_4 = DefaultConvRFF(8,trainable_scale=trainable_scale,
+                            normalization=normalization,
+                            kernel_regularizer=kernel_regularizer,
+                            kernel_size=kernel_size, 
+                            padding=padding,
+                            trainable_W=trainable_W,name='ConvRFF40')(x)
     x =  layers.BatchNormalization(name='Batch41')(x)
     x =  DefaultPooling()(x) # 16x16 -> 8x8
 

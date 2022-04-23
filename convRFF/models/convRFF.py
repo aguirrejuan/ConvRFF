@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf 
 
+
 def _get_random_features_initializer(initializer, shape):
 
     def _get_cauchy_samples(loc, scale, shape):
@@ -119,7 +120,4 @@ class ConvRFF(tf.keras.layers.Layer):
         return outputs
 
     
-def RFF(x,height,width,phi_units,scale,trainable=True,name='Phi'):
-    flatten = tf.keras.layers.Flatten()(x)
-    rff = tf.keras.layers.experimental.RandomFourierFeatures(output_dim=int(height/scale)*int(width/scale)*phi_units,trainable=trainable,name=name)(flatten)
-    return rff
+
