@@ -241,7 +241,7 @@ def _get_random_features_initializer(initializer, shape,seed):
       random_features_initializer = initializers.RandomNormal(stddev=1.0,seed=seed)
     elif initializer.lower() == 'laplacian':
       random_features_initializer = initializers.Constant(
-          _get_cauchy_samples(loc=0.0, scale=1.0, shape=shape,seed=seed))
+          _get_cauchy_samples(loc=0.0, scale=1.0, shape=shape))
 
     else:
       raise ValueError(
