@@ -76,9 +76,10 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',
                             kernel_size=kernel_size,
                             padding=padding,
                             trainable_W=trainable_W,
-                            name='RFF')(x) 
+                            name='RFF',
+                            seed=42)(x) 
     elif type_layer=='RFF':
-        x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale,name='RFF')
+        x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale,name='RFF',seed=42)
     else: 
         x = layers.Lambda(lambda x: x,name='RFF')(x)
 
@@ -105,5 +106,5 @@ def get_model(input_shape=(128,128,3),name='FCNConvRFF',
 
 
 if __name__ == '__main__':
-    model = get_model(type_layer='RFF')
+    model = get_model(type_layer='cRFF')
     model.summary()

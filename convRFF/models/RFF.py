@@ -131,6 +131,7 @@ class RandomFourierFeatures(base_layer.Layer):
                scale=None,
                trainable=False,
                name=None,
+               seed=None,
                **kwargs):
     if output_dim <= 0:
       raise ValueError(
@@ -148,6 +149,7 @@ class RandomFourierFeatures(base_layer.Layer):
     self.output_dim = output_dim
     self.kernel_initializer = kernel_initializer
     self.scale = scale
+    self.seed = seed 
 
   def build(self, input_shape):
     input_shape = tf.TensorShape(input_shape)
@@ -167,7 +169,7 @@ class RandomFourierFeatures(base_layer.Layer):
     input_dim = input_shape.dims[1].value
 
     kernel_initializer = _get_random_features_initializer(
-        self.kernel_initializer, shape=(input_dim, self.output_dim))
+        self.kernel_initializer, shape=(input_dim, self.output_dim),seed=self.seed)
 
     self.unscaled_kernel = self.add_weight(
         name='unscaled_kernel',
@@ -180,7 +182,7 @@ class RandomFourierFeatures(base_layer.Layer):
         name='bias',
         shape=(self.output_dim,),
         dtype=tf.float32,
-        initializer=initializers.RandomUniform(minval=0.0, maxval=2 * np.pi),
+        initializer=initializers.RandomUniform(minval=0.0, maxval=2 * np.pi,seed=self.seed),
         trainable=False)
 
     if self.scale is None:
@@ -219,25 +221,27 @@ class RandomFourierFeatures(base_layer.Layer):
         'output_dim': self.output_dim,
         'kernel_initializer': kernel_initializer,
         'scale': self.scale,
+        'seed':self.seed
     }
     base_config = super(RandomFourierFeatures, self).get_config()
     return dict(list(base_config.items()) + list(config.items()))
 
 
-def _get_random_features_initializer(initializer, shape):
+def _get_random_features_initializer(initializer, shape,seed):
   """Returns Initializer object for random features."""
 
   def _get_cauchy_samples(loc, scale, shape):
+    np.random.seed(seed) 
     probs = np.random.uniform(low=0., high=1., size=shape)
     return loc + scale * np.tan(np.pi * (probs - 0.5))
 
   random_features_initializer = initializer
   if isinstance(initializer, str):
     if initializer.lower() == 'gaussian':
-      random_features_initializer = initializers.RandomNormal(stddev=1.0)
+      random_features_initializer = initializers.RandomNormal(stddev=1.0,seed=seed)
     elif initializer.lower() == 'laplacian':
       random_features_initializer = initializers.Constant(
-          _get_cauchy_samples(loc=0.0, scale=1.0, shape=shape))
+          _get_cauchy_samples(loc=0.0, scale=1.0, shape=shape,seed=seed))
 
     else:
       raise ValueError(
@@ -254,7 +258,7 @@ def _get_default_scale(initializer, input_dim):
 
 
 
-def RFF(x,height,width,phi_units,scale,trainable=True,name='Phi'):
+def RFF(x,height,width,phi_units,scale,trainable=True,name='Phi',seed=None):
     flatten = tf.keras.layers.Flatten()(x)
-    rff = RandomFourierFeatures(output_dim=int(height/scale)*int(width/scale)*phi_units,trainable=trainable,name=name)(flatten)
+    rff = RandomFourierFeatures(output_dim=int(height/scale)*int(width/scale)*phi_units,trainable=trainable,name=name,seed=seed)(flatten)
     return rff

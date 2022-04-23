@@ -2,15 +2,16 @@ import numpy as np
 import tensorflow as tf 
 
 
-def _get_random_features_initializer(initializer, shape):
+def _get_random_features_initializer(initializer, shape,seed):
 
     def _get_cauchy_samples(loc, scale, shape):
+        np.random.seed(seed) 
         probs = np.random.uniform(low=0., high=1., size=shape)
         return loc + scale * np.tan(np.pi * (probs - 0.5))
 
     if isinstance(initializer,str):
         if initializer == "gaussian":
-            return tf.keras.initializers.RandomNormal(stddev=1.0)
+            return tf.keras.initializers.RandomNormal(stddev=1.0,seed=seed)
         elif initializer == "laplacian":
             return tf.keras.initializers.Constant(
                 _get_cauchy_samples(loc=0.0, scale=1.0, shape=shape))
@@ -28,6 +29,7 @@ class ConvRFF(tf.keras.layers.Layer):
                  stride=1,
                  kernel_regularizer=None,
                  normalization=True,
+                 seed=None,
                  **kwargs):
         
         super(ConvRFF,self).__init__(**kwargs)
@@ -42,6 +44,7 @@ class ConvRFF(tf.keras.layers.Layer):
         self.initializer = kernel
         self.kernel_regularizer = kernel_regularizer
         self.normalization = normalization
+        self.seed = seed
 
     def get_config(self):
 
@@ -54,7 +57,8 @@ class ConvRFF(tf.keras.layers.Layer):
             'trainable_W':self.trainable_W,
             'padding':self.padding,
             'kernel':self.initializer,
-            'normalization':self.normalization
+            'normalization':self.normalization,
+            'seed' : self.seed 
         })
         return config
 
@@ -66,7 +70,8 @@ class ConvRFF(tf.keras.layers.Layer):
                                                               shape=(self.kernel_size,
                                                                      self.kernel_size,
                                                                      input_dim,
-                                                                     self.output_dim))
+                                                                     self.output_dim),
+                                                               seed=self.seed)
 
         self.kernel = self.add_weight(
             name='kernel',
@@ -82,7 +87,7 @@ class ConvRFF(tf.keras.layers.Layer):
             shape=(self.output_dim,),
             dtype=tf.float32,
             initializer=tf.random_uniform_initializer(
-                minval=0.0,maxval=2*np.pi),
+                minval=0.0,maxval=2*np.pi,seed=self.seed),
             trainable=self.trainable_W
         )
 
