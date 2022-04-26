@@ -6,3 +6,4 @@ tf-keras-vis
 scikit-image
 matplotlib
 tensorflow-datasets
+tensorflow_addons

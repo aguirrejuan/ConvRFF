@@ -46,7 +46,8 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF_Decoder_Encoder',
                             kernel_regularizer=kernel_regularizer,
                             kernel_size=kernel_size, 
                             padding=padding,
-                            trainable_W=trainable_W,name='ConvRFF10')(x)
+                            trainable_W=trainable_W,name='ConvRFF10',
+                            seed=87)(x)
     x =  layers.BatchNormalization(name='Batch11')(x)
     x = DefaultPooling()(x) # 128x128 -> 64x64
 
@@ -58,7 +59,8 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF_Decoder_Encoder',
                             kernel_regularizer=kernel_regularizer,
                             kernel_size=kernel_size, 
                             padding=padding,
-                            trainable_W=trainable_W,name='ConvRFF20')(x)
+                            trainable_W=trainable_W,name='ConvRFF20',
+                            seed=56)(x)
     x =  layers.BatchNormalization(name='Batch22')(x)
     x = DefaultPooling()(x) # 64x64 -> 32x32
 
@@ -71,7 +73,8 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF_Decoder_Encoder',
                             kernel_regularizer=kernel_regularizer,
                             kernel_size=kernel_size, 
                             padding=padding,
-                            trainable_W=trainable_W,name='ConvRFF30')(x)
+                            trainable_W=trainable_W,name='ConvRFF30',
+                            seed=12)(x)
     x =  layers.BatchNormalization(name='Batch31')(x)
     x = DefaultPooling()(x) # 32x32 -> 16x16
 
@@ -83,7 +86,8 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF_Decoder_Encoder',
                             kernel_regularizer=kernel_regularizer,
                             kernel_size=kernel_size, 
                             padding=padding,
-                            trainable_W=trainable_W,name='ConvRFF40')(x)
+                            trainable_W=trainable_W,name='ConvRFF40',
+                            seed=65)(x)
     x =  layers.BatchNormalization(name='Batch41')(x)
     x =  DefaultPooling()(x) # 16x16 -> 8x8
 
@@ -98,9 +102,10 @@ def get_model(input_shape=(128,128,3),name='UnetConvRFF_Decoder_Encoder',
                             kernel_size=kernel_size, 
                             padding=padding,
                             trainable_W=trainable_W,
-                            name='RFF')(x) 
+                            name='RFF',
+                            seed=42)(x) 
     elif type_layer == 'RFF':
-        x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale,name='RFF')
+        x = RFF(x,input_shape[0],input_shape[1],phi_units,scale,trainable=trainable_scale,name='RFF',seed=42)
     
     else:
         x = layers.Lambda(lambda x: x,name='RFF')(x)
