@@ -10,6 +10,6 @@
 
 * [Experiment - 5]() To see...
 
-* [Experiment - 6  Shallow ConvRFF on MNIST datasets](https://colab.research.google.com/drive/1Xoae-FTfxM4K8d2WNCcMH8L91yZGVIlv?usp=sharing): Comparison between shallow networs (One Convolutional layer and one dense) on FASHION and DIGIT MNIST datasets. The results show that over FASHION dataset, ConvRFF gets 0.95 Acc in training and 0.77 Acc on test, while the CNN get 0.83 acc in training and 0.80 acc in test. 
+* [Experiment - 6  Shallow ConvRFF on MNIST datasets](https://colab.research.google.com/drive/1Xoae-FTfxM4K8d2WNCcMH8L91yZGVIlv?usp=sharing): Comparison between shallow networks (One Convolutional layer and one dense) on FASHION and DIGIT MNIST datasets. **ConvRFF perform worse than FCN and CNN if the normalize image is apply as input, but if the image is not normalize ConvRFF gets underfitting with 0.92 acc in train and 0.79 acc on test.** 
 
 

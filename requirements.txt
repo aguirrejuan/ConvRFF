@@ -7,3 +7,4 @@ scikit-image
 matplotlib
 tensorflow-datasets
 tensorflow_addons
+wandb 
