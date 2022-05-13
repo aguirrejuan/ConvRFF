@@ -1,3 +1,6 @@
+""" Keras vis for segmentation models 
+"""
+
 import tensorflow as tf 
 from tensorflow.keras.layers import Lambda, Input
 from tensorflow.keras.models import Model, clone_model
@@ -139,6 +142,7 @@ def load_data(number_samples=15):
         break
     return imgs,masks
 
+
 def load_catDog(num_examples=15):
     from convRFF.datasets.catsDogs import get_data 
     train_batches, test_batches = get_data(num_examples)
@@ -152,14 +156,22 @@ if __name__ == "__main__":
     data,masks = load_catDog(num_examples=10)
 
     model = load_model('/home/juan/Downloads/model.h5')
-    #model.summary()
-    _class = 1
-    segXAI = SegXAI(model, data,masks=masks,target_class=_class, layer_name='conv2d_38') #conv2d_33,conv2d_22
+    #model = load_model('/home/juan/Documents/ConvRFF/model.h5')
+    model.summary()
+    _class = 0
+    segXAI = SegXAI(model, data,masks=masks,target_class=_class, layer_name='conv2d_33') #conv2d_33,conv2d_22
 
-    #cam = segXAI.gradCam()
-    #cam = segXAI.gradCamPlusPlus()
+    cam = segXAI.gradCam()
+
+    print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
+    segXAI.plot(cam,nrows=2, ncols=5)
+
+    cam = segXAI.gradCamPlusPlus()
+
+    print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
+    segXAI.plot(cam,nrows=2, ncols=5)
+
     cam = segXAI.scoreCam()
     
     print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
-    
-    segXAI.plot(cam,nrows=2, ncols=5,_class=_class)
+    segXAI.plot(cam,nrows=2, ncols=5)

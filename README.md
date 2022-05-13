@@ -35,14 +35,13 @@ $$\mathbf{F}_l = \phi(\mathbf{F}_{l-1})= cos(\frac{\mathbf{W}_l}{\sigma}\otimes\
 
 
 ## TODO 
-1. Make test in the models with all dataset, test? train? 
-2. Is there a bugs in averages metrics when the class is zero?
-3. Normalization for score-cam (mnist experiment)() (just for plotting?)
+-3. Added parameter layer for averges CAM 
+-2. add cross validalidation 
+1. Test over more complex dataset (cats and dogs classification)
 4. Layer CAM
 5. Add compatibily with generator for large datasets. 
-6. Build a plot for all methods comparative.
 7. modify score cam to select input 
-8. Inform about the wrong calculation in the notebook
+8. Inform about the wrong calculation in the notebook (Cristian)
 9. Shutdown activation of layer in the middle  
 
- 
+
