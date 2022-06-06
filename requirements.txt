@@ -2,7 +2,7 @@ gdown==4.3.0
 pandas
 sklearn
 tensorflow
-git+https://github.com/aguirrejuan/tf-keras-vis.git
+git+https://github.com/UN-GCPDS/tf-keras-vis.git
 scikit-image
 matplotlib
 tensorflow-datasets

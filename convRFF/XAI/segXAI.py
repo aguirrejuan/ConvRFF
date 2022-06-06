@@ -9,6 +9,7 @@ from tensorflow.keras.activations import sigmoid
 from tf_keras_vis.gradcam import Gradcam
 from tf_keras_vis.scorecam import Scorecam
 from tf_keras_vis.gradcam_plus_plus import GradcamPlusPlus
+from tf_keras_vis.layercam import Layercam
 from tf_keras_vis.utils.model_modifiers import ReplaceToLinear
 
 import matplotlib.pyplot as plt
@@ -83,10 +84,19 @@ class SegXAI:
 
     def scoreCam(self,):
         scorecam = Scorecam(self.model,
-                            model_modifier=ReplaceToLinear(),
                             clone=True,
                             )
         cam = scorecam(self.score_function,
+                        (self.data,self.masks),
+                        penultimate_layer=self.layer_name,
+                        seek_penultimate_conv_layer=False)
+        return cam[0]
+
+    def layerCam(self,):
+        layercam = Layercam(self.model,
+                            model_modifier=ReplaceToLinear(),
+                            clone=True)
+        cam = layercam(self.score_function,
                         (self.data,self.masks),
                         penultimate_layer=self.layer_name,
                         seek_penultimate_conv_layer=False)
@@ -102,7 +112,7 @@ class SegXAI:
 
     def average_drop(self,cam):
         Y_c,O_c = self.YcOc(cam)
-        return np.mean(np.maximum(0,(Y_c-O_c))/Y_c)*100
+        return np.sum(np.maximum(0,(Y_c-O_c))/Y_c)*100
     
 
     def average_increase(self,cam):
@@ -157,21 +167,18 @@ if __name__ == "__main__":
 
     model = load_model('/home/juan/Downloads/model.h5')
     #model = load_model('/home/juan/Documents/ConvRFF/model.h5')
-    model.summary()
-    _class = 0
+    #model.summary()
+    _class = 1
     segXAI = SegXAI(model, data,masks=masks,target_class=_class, layer_name='conv2d_33') #conv2d_33,conv2d_22
 
     cam = segXAI.gradCam()
-
     print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
     segXAI.plot(cam,nrows=2, ncols=5)
-
     cam = segXAI.gradCamPlusPlus()
-
     print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
     segXAI.plot(cam,nrows=2, ncols=5)
 
-    cam = segXAI.scoreCam()
+    cam = segXAI.layerCam()
     
     print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
     segXAI.plot(cam,nrows=2, ncols=5)
