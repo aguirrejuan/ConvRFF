@@ -90,7 +90,7 @@ class Cams:
 
     def _average_drop(self,cam):
         Y_c,O_c = self._YcOc(cam)
-        return np.sum(np.maximum(0,(Y_c-O_c))/Y_c)*100
+        return np.mean(np.maximum(0,(Y_c-O_c))/Y_c)*100
 
 
     def _average_increase(self,cam):
