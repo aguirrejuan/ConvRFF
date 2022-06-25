@@ -3,6 +3,7 @@ pandas
 sklearn
 tensorflow
 git+https://github.com/UN-GCPDS/tf-keras-vis.git
+git+https://github.com/UN-GCPDS/python-gcpds.image_segmentation.git
 scikit-image
 matplotlib
 tensorflow-datasets
