@@ -44,4 +44,5 @@ $$\mathbf{F}_l = \phi(\mathbf{F}_{l-1})= cos(\frac{\mathbf{W}_l}{\sigma}\otimes\
 8. Inform about the wrong calculation in the notebook (Cristian)
 9. Shutdown activation of layer in the middle  
 10. https://en.wikipedia.org/wiki/Radon%E2%80%93Nikodym_theorem
+11. Bochner y weiner Jinche próximo viernes 
 
