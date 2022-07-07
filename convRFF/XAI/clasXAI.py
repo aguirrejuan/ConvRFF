@@ -9,16 +9,19 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 
+from tensorflow.keras.backend import epsilon
+
 
 
 class Cams:
 
-    def __init__(self,model,images,labels,layer):
+    def __init__(self,model,images,labels,layer,filter_correct_labels=False):
         self.model = model
         self.images = images 
         self.labels = labels 
         self.layer = layer 
         self.cams = {}
+        self.filter_correct_labels = filter_correct_labels
 
 
     def score_function(self,output):
@@ -83,14 +86,20 @@ class Cams:
 
     def _YcOc(self,cam):
         cam  = cam[...,None]
-        Y_c = self.model.predict(self.images)[np.arange(len(cam)),self.labels]
-        O_c = self.model.predict(self.images*cam)[np.arange(len(cam)),self.labels]
+        Y_c = self.model.predict(self.images)[np.arange(len(cam)), self.labels]
+        O_c = self.model.predict(self.images*cam)[np.arange(len(cam)), self.labels]
+
+        if self.filter_correct_labels:
+            mask = np.argmax(O_c,axis=-1) == self.labels
+            Y_c = Y_c[mask]
+            O_c = O_c[mask]
+            
         return Y_c,O_c
 
 
     def _average_drop(self,cam):
         Y_c,O_c = self._YcOc(cam)
-        return np.mean(np.maximum(0,(Y_c-O_c))/Y_c)*100
+        return np.mean(np.maximum(0,(Y_c-O_c))/(Y_c+epsilon()))*100
 
 
     def _average_increase(self,cam):
@@ -99,7 +108,7 @@ class Cams:
 
     def _average_relative_increase(self,cam):
         Y_c,O_c = self._YcOc(cam)
-        return np.mean(np.maximum(0,(O_c-Y_c))/Y_c)*100
+        return np.mean(np.maximum(0,(O_c-Y_c))/(Y_c+epsilon()))*100
 
 
     def averages_drops(self,):
