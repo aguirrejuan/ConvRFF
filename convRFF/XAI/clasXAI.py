@@ -97,6 +97,10 @@ class Cams:
         Y_c,O_c = self._YcOc(cam)
         return 100*np.mean(Y_c < O_c)
 
+    def _average_relative_increase():
+        Y_c,O_c = self._YcOc(cam)
+        return np.mean(np.maximum(0,(O_c-Y_c))/Y_c)*100
+
 
     def averages_drops(self,):
         return {name:self._average_drop(cams) for name,cams in self.cams.items()}
@@ -105,6 +109,8 @@ class Cams:
     def averages_increases(self,):
         return {name:self._average_increase(cams) for name,cams in self.cams.items()}
 
+    def averages_relative_increases(self,):
+        return {name:self._average_relative_increase(cams) for name,cams in self.cams.items()}
 
     def get_list_results(self):
         results = {}
@@ -121,4 +127,5 @@ class Cams:
         for name, cam in self.cams.items():
             results[name] =  [np.mean(self.cams[name][self.labels == i],axis=0) for i in np.sort(np.unique(self.labels))]
         return results
+
 
