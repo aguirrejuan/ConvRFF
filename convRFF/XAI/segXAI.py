@@ -27,7 +27,8 @@ def _custom_layer(target_class):
             mask = mask
         elif target_class == 0:
             mask = mask-1
-        return tf.reduce_mean(mask*pred,axis=[1,2,3])[...,None]
+        result = tf.reduce_mean(mask*pred,axis=[1,2,3])[...,None]
+        return result
     return compute 
 
 
@@ -89,7 +90,7 @@ class SegXAI:
         cam = scorecam(self.score_function,
                         (self.data,self.masks),
                         penultimate_layer=self.layer_name,
-                        seek_penultimate_conv_layer=False)
+                        seek_penultimate_conv_layer=True)
         return cam[0]
 
     def layerCam(self,):
@@ -112,7 +113,7 @@ class SegXAI:
 
     def average_drop(self,cam):
         Y_c,O_c = self.YcOc(cam)
-        return np.sum(np.maximum(0,(Y_c-O_c))/Y_c)*100
+        return np.mean(np.maximum(0,(Y_c-O_c))/Y_c)*100
     
 
     def average_increase(self,cam):
@@ -136,9 +137,9 @@ class SegXAI:
             contour = segmentation.clear_border(pad_masks[i,...,0])
             pred_contour = segmentation.clear_border(pad_pred_masks[i,...,0])
             ax[i].imshow(self.data[i])
-            ax[i].imshow(heatmap, cmap='jet', alpha=0.5)
-            ax[i].contour(contour,[0.5],colors=['white'])
-            ax[i].contour(pred_contour,[0.5],colors=['red'])
+            ax[i].imshow(heatmap, cmap='jet', alpha=0.3)
+            #ax[i].contour(contour,[0.5],colors=['white'])
+            #ax[i].contour(pred_contour,[0.5],colors=['red'])
             ax[i].axis('off')
         plt.tight_layout()
         plt.show()
@@ -168,17 +169,19 @@ if __name__ == "__main__":
     model = load_model('/home/juan/Downloads/model.h5')
     #model = load_model('/home/juan/Documents/ConvRFF/model.h5')
     #model.summary()
-    _class = 1
+    _class = 0
     segXAI = SegXAI(model, data,masks=masks,target_class=_class, layer_name='conv2d_33') #conv2d_33,conv2d_22
-
-    cam = segXAI.gradCam()
-    print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
-    segXAI.plot(cam,nrows=2, ncols=5)
-    cam = segXAI.gradCamPlusPlus()
-    print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
-    segXAI.plot(cam,nrows=2, ncols=5)
-
-    cam = segXAI.layerCam()
+#
+    #cam = segXAI.gradCam()
+    #print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
+    #segXAI.plot(cam,nrows=2, ncols=5)
+    #cam = segXAI.gradCamPlusPlus()
+    #print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
+    #segXAI.plot(cam,nrows=2, ncols=5)
+#
+    #cam = segXAI.layerCam()
     
+    cam = segXAI.scoreCam()
+
     print(f'Average Drop: {segXAI.average_drop(cam):.3f} \nAverage Increace: {segXAI.average_increase(cam):.3f}')
     segXAI.plot(cam,nrows=2, ncols=5)
