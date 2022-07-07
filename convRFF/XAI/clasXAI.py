@@ -97,7 +97,7 @@ class Cams:
         Y_c,O_c = self._YcOc(cam)
         return 100*np.mean(Y_c < O_c)
 
-    def _average_relative_increase():
+    def _average_relative_increase(self,cam):
         Y_c,O_c = self._YcOc(cam)
         return np.mean(np.maximum(0,(O_c-Y_c))/Y_c)*100
 
