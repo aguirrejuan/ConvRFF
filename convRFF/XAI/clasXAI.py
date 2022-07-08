@@ -96,7 +96,7 @@ class Cams:
         if not return_oc:
             return Y_c,O_c
         else: 
-            return (Y_c,O_c),scores_o_c
+            return Y_c,O_c,scores_o_c
 
 
     def _average_drop(self,cam,filter_correct_labels,return_oc=False):
