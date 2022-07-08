@@ -124,11 +124,11 @@ class Cams:
     def averages_increases(self,filter_correct_labels=False):
         return {name:self._average_increase(cams,filter_correct_labels) for name,cams in self.cams.items()}
 
-    def averages_relative_increases(self,filter_correct_labels=False,return_oc=False):
-        return {name:np.mean(self._average_relative_increase(cams,filter_correct_labels,return_oc)) for name,cams in self.cams.items()}
+    def averages_relative_increases(self,filter_correct_labels=False):
+        return {name:np.mean(self._average_relative_increase(cams,filter_correct_labels)) for name,cams in self.cams.items()}
     
-    def averages_relative_increases_vector(self,filter_correct_labels=False):
-        return {name:self._average_relative_increase(cams,filter_correct_labels) for name,cams in self.cams.items()}
+    def averages_relative_increases_vector(self,filter_correct_labels=False,return_oc=False):
+        return {name:self._average_relative_increase(cams,filter_correct_labels,return_oc) for name,cams in self.cams.items()}
 
     def get_list_results(self):
         results = {}
