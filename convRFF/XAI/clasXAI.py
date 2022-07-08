@@ -15,14 +15,12 @@ from tensorflow.keras.backend import epsilon
 
 class Cams:
 
-    def __init__(self,model,images,labels,layer,filter_correct_labels=False):
+    def __init__(self,model,images,labels,layer):
         self.model = model
         self.images = images 
         self.labels = labels 
         self.layer = layer 
         self.cams = {}
-        self.filter_correct_labels = filter_correct_labels
-
 
     def score_function(self,output):
         return [output[i,label] for i,label in enumerate(self.labels)]
@@ -84,42 +82,43 @@ class Cams:
         self.layerCam()
 
 
-    def _YcOc(self,cam):
+    def _YcOc(self,cam,filter_correct_labels):
         cam  = cam[...,None]
         Y_c = self.model.predict(self.images)[np.arange(len(cam)), self.labels]
-        O_c = self.model.predict(self.images*cam)[np.arange(len(cam)), self.labels]
-
-        if self.filter_correct_labels:
-            mask = np.argmax(O_c,axis=-1) == self.labels
+        scores_o_c = self.model.predict(self.images*cam)
+        O_c = scores_o_c[np.arange(len(cam)), self.labels]
+        
+        if filter_correct_labels:
+            mask = np.argmax(scores_o_c,axis=-1) == self.labels
             Y_c = Y_c[mask]
             O_c = O_c[mask]
-            
+               
         return Y_c,O_c
 
 
-    def _average_drop(self,cam):
-        Y_c,O_c = self._YcOc(cam)
+    def _average_drop(self,cam,filter_correct_labels):
+        Y_c,O_c = self._YcOc(cam,filter_correct_labels)
         return np.mean(np.maximum(0,(Y_c-O_c))/(Y_c+epsilon()))*100
 
 
-    def _average_increase(self,cam):
-        Y_c,O_c = self._YcOc(cam)
+    def _average_increase(self,cam,filter_correct_labels):
+        Y_c,O_c = self._YcOc(cam,filter_correct_labels)
         return 100*np.mean(Y_c < O_c)
 
-    def _average_relative_increase(self,cam):
-        Y_c,O_c = self._YcOc(cam)
+    def _average_relative_increase(self,cam,filter_correct_labels):
+        Y_c,O_c = self._YcOc(cam,filter_correct_labels)
         return np.mean(np.maximum(0,(O_c-Y_c))/(Y_c+epsilon()))*100
 
 
-    def averages_drops(self,):
-        return {name:self._average_drop(cams) for name,cams in self.cams.items()}
+    def averages_drops(self,filter_correct_labels=False):
+        return {name:self._average_drop(cams,filter_correct_labels) for name,cams in self.cams.items()}
 
 
-    def averages_increases(self,):
-        return {name:self._average_increase(cams) for name,cams in self.cams.items()}
+    def averages_increases(self,filter_correct_labels=False):
+        return {name:self._average_increase(cams,filter_correct_labels) for name,cams in self.cams.items()}
 
-    def averages_relative_increases(self,):
-        return {name:self._average_relative_increase(cams) for name,cams in self.cams.items()}
+    def averages_relative_increases(self,filter_correct_labels=False):
+        return {name:self._average_relative_increase(cams,filter_correct_labels) for name,cams in self.cams.items()}
 
     def get_list_results(self):
         results = {}
@@ -136,5 +135,3 @@ class Cams:
         for name, cam in self.cams.items():
             results[name] =  [np.mean(self.cams[name][self.labels == i],axis=0) for i in np.sort(np.unique(self.labels))]
         return results
-
-
