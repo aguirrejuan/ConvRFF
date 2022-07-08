@@ -98,7 +98,7 @@ class Cams:
 
     def _average_drop(self,cam,filter_correct_labels):
         Y_c,O_c = self._YcOc(cam,filter_correct_labels)
-        return np.mean(np.maximum(0,(Y_c-O_c))/(Y_c+epsilon()))*100
+        return 100*np.maximum(0,(Y_c-O_c))/(Y_c+epsilon())
 
 
     def _average_increase(self,cam,filter_correct_labels):
@@ -107,17 +107,21 @@ class Cams:
 
     def _average_relative_increase(self,cam,filter_correct_labels):
         Y_c,O_c = self._YcOc(cam,filter_correct_labels)
-        return np.mean(np.maximum(0,(O_c-Y_c))/(Y_c+epsilon()))*100
+        return 100*(O_c-Y_c)/(Y_c+epsilon())
 
-
-    def averages_drops(self,filter_correct_labels=False):
+    def averages_drops_vector(self,filter_correct_labels=False):
         return {name:self._average_drop(cams,filter_correct_labels) for name,cams in self.cams.items()}
 
+    def averages_drops(self,filter_correct_labels=False):
+        return {name:np.mean(self._average_drop(cams,filter_correct_labels)) for name,cams in self.cams.items()}
 
     def averages_increases(self,filter_correct_labels=False):
         return {name:self._average_increase(cams,filter_correct_labels) for name,cams in self.cams.items()}
 
     def averages_relative_increases(self,filter_correct_labels=False):
+        return {name:np.mean(self._average_relative_increase(cams,filter_correct_labels)) for name,cams in self.cams.items()}
+    
+    def averages_relative_increases_vector(self,filter_correct_labels=False):
         return {name:self._average_relative_increase(cams,filter_correct_labels) for name,cams in self.cams.items()}
 
     def get_list_results(self):
