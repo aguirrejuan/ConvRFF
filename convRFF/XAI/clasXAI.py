@@ -104,7 +104,7 @@ class Cams:
             Y_c,O_c = self._YcOc(cam,filter_correct_labels)
             return 100*np.maximum(0,(Y_c-O_c))/(Y_c+epsilon())
         else:
-            Y_c,O_c,score_oc = self._YcOc(cam,filter_correct_labels,return_oc=False)
+            Y_c,O_c,score_oc = self._YcOc(cam,filter_correct_labels,return_oc)
             return 100*np.maximum(0,(Y_c-O_c))/(Y_c+epsilon()),score_oc
 
 
