@@ -84,7 +84,8 @@ class Cams:
 
     def _YcOc(self,cam,filter_correct_labels,return_oc=False):
         cam  = cam[...,None]
-        Y_c = self.model.predict(self.images)[np.arange(len(cam)), self.labels]
+        scores_y_c = self.model.predict(self.images)
+        Y_c = scores_y_c[np.arange(len(cam)), self.labels]
         scores_o_c = self.model.predict(self.images*cam)
         O_c = scores_o_c[np.arange(len(cam)), self.labels]
         
@@ -96,7 +97,7 @@ class Cams:
         if not return_oc:
             return Y_c,O_c
         else: 
-            return Y_c,O_c,scores_o_c
+            return Y_c,O_c,scores_o_c,scores_y_c
 
 
     def _average_drop(self,cam,filter_correct_labels,return_oc=False):
@@ -104,8 +105,8 @@ class Cams:
             Y_c,O_c = self._YcOc(cam,filter_correct_labels)
             return 100*np.maximum(0,(Y_c-O_c))/(Y_c+epsilon())
         else:
-            Y_c,O_c,score_oc = self._YcOc(cam,filter_correct_labels,return_oc)
-            return 100*np.maximum(0,(Y_c-O_c))/(Y_c+epsilon()),score_oc
+            Y_c,O_c,score_oc,scores_y_c = self._YcOc(cam,filter_correct_labels,return_oc)
+            return 100*np.maximum(0,(Y_c-O_c))/(Y_c+epsilon()),score_oc,scores_y_c
 
 
     def _average_increase(self,cam,filter_correct_labels):
@@ -117,8 +118,8 @@ class Cams:
             Y_c,O_c = self._YcOc(cam,filter_correct_labels)
             return 100*(O_c-Y_c)/(Y_c+epsilon())
         else:
-            Y_c,O_c,score_oc = self._YcOc(cam,filter_correct_labels,return_oc)
-            return 100*(O_c-Y_c)/(Y_c+epsilon()),score_oc
+            Y_c,O_c,score_oc,scores_y_c = self._YcOc(cam,filter_correct_labels,return_oc)
+            return 100*(O_c-Y_c)/(Y_c+epsilon()),score_oc,scores_y_c
 
     def averages_drops_vector(self,filter_correct_labels=False,return_oc=False):
         return {name:self._average_drop(cams,filter_correct_labels,return_oc) for name,cams in self.cams.items()}
