@@ -8,14 +8,20 @@ def normalize(input_image, input_mask):
     return input_image, input_mask
 
 
-def load_image(datapoint):
-    input_image = tf.image.resize(datapoint['image'], (128, 128))
-    input_mask = tf.image.resize(datapoint['segmentation_mask'], (128, 128))
-    input_image, input_mask = normalize(input_image, input_mask)
-    return input_image, input_mask
+def load_image(load_labels):
+    def load(datapoint):
+        input_image = tf.image.resize(datapoint['image'], (128, 128))
+        input_mask = tf.image.resize(datapoint['segmentation_mask'], (128, 128))
+        input_image, input_mask = normalize(input_image, input_mask)
+        if load_labels:
+            return input_image, input_mask, datapoint['label']
+        else:
+            return input_image, input_mask
+    return load 
 
 
-def get_data(batch_size=16):
+def get_data(batch_size=16,load_labels=False):
+
     config_tfds = tfds.ReadConfig(shuffle_seed=42)
     dataset, info = tfds.load('oxford_iiit_pet:3.*.*', with_info=True,read_config=config_tfds)
 
