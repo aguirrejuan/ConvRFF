@@ -121,8 +121,8 @@ class ConvRFF(tf.keras.layers.Layer):
                                padding=self.padding)
         outputs = tf.nn.bias_add(outputs,self.bias)
 
-        outputs = tf.math.multiply(tf.math.sqrt(2/self.output_dim),tf.cos(outputs)) if self.normalization else tf.cos(outputs)
+        output_dim = tf.cast(self.output_dim,tf.float32)
+        outputs = tf.math.multiply(tf.math.sqrt(2/output_dim),tf.cos(outputs)) if self.normalization else tf.cos(outputs)
         return outputs
-
     
 
