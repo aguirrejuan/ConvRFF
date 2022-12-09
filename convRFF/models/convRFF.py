@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf 
+import tensorflow_probability as tfp
 
 
 def _get_random_features_initializer(initializer, shape,seed):
