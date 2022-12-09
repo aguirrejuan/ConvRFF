@@ -30,6 +30,7 @@ class ConvRFF(tf.keras.layers.Layer):
                  kernel_regularizer=None,
                  normalization=True,
                  seed=None,
+                 mass = False
                  **kwargs):
         
         super(ConvRFF,self).__init__(**kwargs)
@@ -45,6 +46,7 @@ class ConvRFF(tf.keras.layers.Layer):
         self.kernel_regularizer = kernel_regularizer
         self.normalization = normalization
         self.seed = seed
+        self.mass = mass
 
     def get_config(self):
 
@@ -58,7 +60,8 @@ class ConvRFF(tf.keras.layers.Layer):
             'padding':self.padding,
             'kernel':self.initializer,
             'normalization':self.normalization,
-            'seed' : self.seed 
+            'seed' : self.seed,
+            'mass': self.mass
         })
         return config
 
@@ -109,6 +112,24 @@ class ConvRFF(tf.keras.layers.Layer):
             constraint='NonNeg'
         )
     
+    def _compute_normal_probaility(self,x,mean,std):
+        constant = 1/(tf.math.sqrt(2*np.pi)*std)
+        return constant*tf.math.exp(-0.5*(x-mean)*(x-mean)/(std*std))
+
+    def _compute_mass(self,):
+
+        weights = tf.reshape(self.kernel,shape=(-1,self.output_dim))
+
+        ww = tf.linalg.norm(weights,axis=0)
+        ww_pos = tf.sort(ww)
+        mean_pos = tf.reduce_mean(ww_pos)
+        std_pos = tf.math.reduce_std(ww_pos)
+
+        mass_pos = self.compute_normal_probaility(ww_pos,mean_pos,std_pos)
+        
+        mass_pos = tf.sqrt(tfp.math.trapz(tf.abs(mass_pos),ww_pos))
+        
+        return mass_pos
 
     def call(self,inputs):
 
@@ -123,6 +144,8 @@ class ConvRFF(tf.keras.layers.Layer):
 
         output_dim = tf.cast(self.output_dim,tf.float32)
         outputs = tf.math.multiply(tf.math.sqrt(2/output_dim),tf.cos(outputs)) if self.normalization else tf.cos(outputs)
+
+        outputs = tf.math.multiply(self._compute_mass(),outputs) if self.mass else outputs
         return outputs
     
 
