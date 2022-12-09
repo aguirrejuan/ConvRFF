@@ -30,7 +30,7 @@ class ConvRFF(tf.keras.layers.Layer):
                  kernel_regularizer=None,
                  normalization=True,
                  seed=None,
-                 mass = False
+                 mass = False,
                  **kwargs):
         
         super(ConvRFF,self).__init__(**kwargs)
