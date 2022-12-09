@@ -125,7 +125,7 @@ class ConvRFF(tf.keras.layers.Layer):
         mean_pos = tf.reduce_mean(ww_pos)
         std_pos = tf.math.reduce_std(ww_pos)
 
-        mass_pos = self.compute_normal_probaility(ww_pos,mean_pos,std_pos)
+        mass_pos = self._compute_normal_probaility(ww_pos,mean_pos,std_pos)
         
         mass_pos = tf.sqrt(tfp.math.trapz(tf.abs(mass_pos),ww_pos))
         
