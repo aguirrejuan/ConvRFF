@@ -4,7 +4,6 @@ import tensorflow_probability as tfp
 
 
 def _get_random_features_initializer(initializer, shape,seed):
-
     def _get_cauchy_samples(loc, scale, shape):
         np.random.seed(seed) 
         probs = np.random.uniform(low=0., high=1., size=shape)
@@ -49,8 +48,8 @@ class ConvRFF(tf.keras.layers.Layer):
         self.seed = seed
         self.mass = mass
 
-    def get_config(self):
 
+    def get_config(self):
         config = super().get_config().copy()
         config.update({
             'output_dim': self.output_dim,
@@ -66,10 +65,9 @@ class ConvRFF(tf.keras.layers.Layer):
         })
         return config
 
-    def build(self,input_shape):
-        
-        input_dim = input_shape[-1]
 
+    def build(self,input_shape):
+        input_dim = input_shape[-1]
         kernel_initializer = _get_random_features_initializer(self.initializer,
                                                               shape=(self.kernel_size,
                                                                      self.kernel_size,
@@ -103,7 +101,6 @@ class ConvRFF(tf.keras.layers.Layer):
             else: 
                 raise ValueError(f'Unsupported kernel initializer {self.initializer}')
 
-
         self.kernel_scale = self.add_weight(
             name='kernel_scale',
             shape=(1,),
@@ -113,40 +110,52 @@ class ConvRFF(tf.keras.layers.Layer):
             constraint='NonNeg'
         )
     
+
     def _compute_normal_probaility(self,x,mean,std):
         constant = 1/(tf.math.sqrt(2*np.pi)*std)
         return constant*tf.math.exp(-0.5*(x-mean)*(x-mean)/(std*std))
 
+
     def _compute_mass(self,):
-
         weights = tf.reshape(self.kernel,shape=(-1,self.output_dim))
-
         ww = tf.linalg.norm(weights,axis=0)
         ww_pos = tf.sort(ww)
         mean_pos = tf.reduce_mean(ww_pos)
         std_pos = tf.math.reduce_std(ww_pos)
-
         mass_pos = self._compute_normal_probaility(ww_pos,mean_pos,std_pos)
-        
         mass_pos = tf.sqrt(tfp.math.trapz(tf.abs(mass_pos),ww_pos))
-        
         return mass_pos
 
+
     def call(self,inputs):
-
         scale = tf.math.divide(1.0, self.kernel_scale)
-
         kernel = tf.math.multiply(scale,self.kernel)
-
         outputs = tf.nn.conv2d(inputs,kernel,
                                strides=[1,self.stride,self.stride,1],
                                padding=self.padding)
         outputs = tf.nn.bias_add(outputs,self.bias)
-
         output_dim = tf.cast(self.output_dim,tf.float32)
-        outputs = tf.math.multiply(tf.math.sqrt(2/output_dim),tf.cos(outputs)) if self.normalization else tf.cos(outputs)
+
+        if self.normalization:
+            outputs = tf.math.multiply(tf.math.sqrt(2/output_dim),tf.cos(outputs)) 
+        else:
+            outputs = tf.cos(outputs)
 
         outputs = tf.math.multiply(self._compute_mass(),outputs) if self.mass else outputs
         return outputs
     
+
+
+def ConvRFF_block(x, deepth, mul_dim=3, name='01', trainable_W=True,
+                  kernel_size=3, kernel_regularizer=None):
+
+    phi_units = np.round(deepth*mul_dim).astype(np.uint32)
+    x = ConvRFF(output_dim=phi_units, kernel_size=kernel_size,
+                padding="SAME", trainable_scale=False, 
+                trainable_W=trainable_W, name=f'ConvRFF_{name}', 
+                mass=True,
+                kernel_regularizer=kernel_regularizer)(x)
+    return x 
+
+
 
