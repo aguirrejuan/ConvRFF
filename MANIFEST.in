@@ -1,0 +1,8 @@
+recursive-include convRFF/ *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-include assets/ *
+recursive-exclude examples/ *
+recursive-exclude test/ *
+recursive-exclude notebooks/ *
+recursive-exclude docs/ *

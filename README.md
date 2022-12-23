@@ -27,22 +27,18 @@ $$\mathbf{F}_l = \phi(\mathbf{F}_{l-1})= cos(\frac{\mathbf{W}_l}{\sigma}\otimes\
 
 <center>
 <figure>
-<img src='images/convRFF.png' width="1000"> 
+<img src='assets/convRFF.png' width="1000"> 
 <figcaption></figcaption>
 </figure>
 </center>
 
 
+## Install 
 
-## TODO 
--3. Added parameter layer for averges CAM 
--2. add cross validalidation 
-1. Test over more complex dataset (cats and dogs classification)
-4. Layer CAM
-5. Add compatibily with generator for large datasets. 
-7. modify score cam to select input 
-8. Inform about the wrong calculation in the notebook (Cristian)
-9. Shutdown activation of layer in the middle  
-10. https://en.wikipedia.org/wiki/Radon%E2%80%93Nikodym_theorem
-11. Bochner y weiner Jinche próximo viernes 
+```
+pip install -U git+https://github.com/aguirrejuan/ConvRFF.git
+```
+
+
+
 
