@@ -64,7 +64,7 @@ def get_train_parameters(dataset_class):
     }
 
 
-def train_model(model, dataset_class, run=None):
+def train(model, dataset_class, run=None):
     train_parameters = get_train_parameters(dataset_class)
     compile_parameters  = get_compile_parameters()
     metrics = get_compile_parameters()['metrics']
