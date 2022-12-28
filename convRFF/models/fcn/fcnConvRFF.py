@@ -5,7 +5,7 @@ https://github.com/cralji/RFF-Nerve-UTP/blob/main/FCN_Nerve-UTP.ipynb
 from functools import partial
 import tensorflow as tf
 from tensorflow.keras import Model, layers, regularizers
-from convRFF.models import ConvRFF_block
+from convRFF.layers import ConvRFF_block
 
 
 

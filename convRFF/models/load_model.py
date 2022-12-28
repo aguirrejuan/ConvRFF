@@ -1,17 +1,21 @@
 from tensorflow.keras.models import load_model as ld
-from convRFF.models.RFF import RandomFourierFeatures
-from convRFF.models.convRFF import ConvRFF
-from convRFF.lossMetrics.lossMetrics import dice_coef_loss,iou,dice_coef,sensitivity,specificity
-
+from convRFF.layers import ConvRFF
+from gcpds.image_segmentation.losses import DiceCoeficiente
+from gcpds.image_segmentation.metrics import (Jaccard, 
+                                              Sensitivity,
+                                              Specificity,
+                                              DiceCoeficienteMetric
+)
 
 def load_model(path='model.h5'):
-    model = ld(path,custom_objects={'RandomFourierFeatures':RandomFourierFeatures,
-                                                    'dice_coef_loss':dice_coef_loss,
-                                                    'iou':iou,
-                                                    'dice_coef':dice_coef,
-                                                    'sensitivity':sensitivity,
-                                                    'specificity':specificity,
-                                                    'ConvRFF':ConvRFF})
+    model = ld(path, custom_objects={'ConvRFF':ConvRFF, 
+                                     'DiceCoeficiente':DiceCoeficiente,
+                                     'Jaccard':Jaccard, 
+                                     'Sensitivity':Sensitivity,
+                                     'Specificity':Specificity,
+                                     'DiceCoeficienteMetric':DiceCoeficienteMetric
+                                     }
+                                     )
     return model 
 
 if __name__ == "__main__":

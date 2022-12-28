@@ -6,3 +6,4 @@ recursive-exclude examples/ *
 recursive-exclude test/ *
 recursive-exclude notebooks/ *
 recursive-exclude docs/ *
+recursive-exclude .vscode/ *

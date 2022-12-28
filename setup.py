@@ -8,7 +8,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='convRFF',
-    version='0.1a0',
+    version='1.0a0',
     packages=['convRFF'],
 
     author='Juan Carlos Aguirre Arango',

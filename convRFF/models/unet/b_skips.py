@@ -2,13 +2,11 @@
 https://github.com/cralji/RFF-Nerve-UTP/blob/main/UNET-Nerve-UTP.ipynb
 """
 
-from tensorflow.keras import regularizers
 from functools import partial
+
 import tensorflow as tf
 from tensorflow.keras import Model, layers, regularizers
 from convRFF.models import ConvRFF_block
-
-
 
 DefaultConv2D = partial(layers.Conv2D,
                         kernel_size=3, activation='relu', padding="same")
@@ -21,47 +19,44 @@ upsample = partial(layers.UpSampling2D, (2,2))
 def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
-
-def get_model(input_shape=(128,128,3), name='UNET_RFF', 
-              out_channels=1, kernel_regularizer=None, **kwargs_convrff):
+def unet(input_shape=(128,128,3), name='b_skips', out_channels=1):
 
     # Encoder 
-    k_r = kernel_regularizer#regularizers.L1L2(l1=1e-5, l2=1e-4)
     input_ = layers.Input(shape=input_shape)
 
     x =  layers.BatchNormalization(name='Batch00')(input_)
   
-    x =  ConvRFF_block(x,deepth=4,name='00',kernel_regularizer=k_r,**kwargs_convrff)
+    x =  DefaultConv2D(8,kernel_initializer=kernel_initializer(34),name='Conv10')(x)
     x =  layers.BatchNormalization(name='Batch10')(x)
-    x = level_1 = ConvRFF_block(x,deepth=4,name='11',kernel_regularizer=k_r,**kwargs_convrff)
+    x = level_1 = DefaultConv2D(8,kernel_initializer=kernel_initializer(4),name='Conv11')(x)
     x =  layers.BatchNormalization(name='Batch11')(x)
     x = DefaultPooling(name='Pool10')(x) # 128x128 -> 64x64
 
-    level_1 = ConvRFF_block(level_1,deepth=8,name='01',kernel_regularizer=k_r,**kwargs_convrff)
+    level_1 =  DefaultConv2D(8,kernel_initializer=kernel_initializer(3321),name='Conv01')(level_1)
 
-    x = ConvRFF_block(x,deepth=8,name='20',kernel_regularizer=k_r,**kwargs_convrff)
+    x =  DefaultConv2D(16,kernel_initializer=kernel_initializer(56),name='Conv20')(x)
     x =  layers.BatchNormalization(name='Batch20')(x)
-    x = level_2 = ConvRFF_block(x,deepth=8,name='21',kernel_regularizer=k_r,**kwargs_convrff)
+    x = level_2 = DefaultConv2D(16,kernel_initializer=kernel_initializer(32),name='Conv21')(x)
     x =  layers.BatchNormalization(name='Batch22')(x)
     x = DefaultPooling(name='Pool20')(x) # 64x64 -> 32x32
 
-    level_2 = ConvRFF_block(level_2,deepth=16, name='02',kernel_regularizer=k_r,**kwargs_convrff)
+    level_2 =  DefaultConv2D(16,kernel_initializer=kernel_initializer(321),name='Conv02')(level_2)
 
-    x =  ConvRFF_block(x,deepth=16,name='30',kernel_regularizer=k_r,**kwargs_convrff)
+    x =  DefaultConv2D(32,kernel_initializer=kernel_initializer(87),name='Conv30')(x)
     x =  layers.BatchNormalization(name='Batch30')(x)
-    x = level_3 = ConvRFF_block(x,deepth=16,name='31',kernel_regularizer=k_r,**kwargs_convrff)
+    x = level_3 = DefaultConv2D(32,kernel_initializer=kernel_initializer(30),name='Conv31')(x)
     x =  layers.BatchNormalization(name='Batch31')(x)
     x = DefaultPooling(name='Pool30')(x) # 32x32 -> 16x16
 
-    level_3 = ConvRFF_block(level_3,deepth=32, name='03',kernel_regularizer=k_r,**kwargs_convrff)
+    level_3 =  DefaultConv2D(32,kernel_initializer=kernel_initializer(32211),name='Conv03')(level_3)
 
-    x = ConvRFF_block(x,deepth=32,name='40',kernel_regularizer=k_r,**kwargs_convrff)
+    x = DefaultConv2D(64,kernel_initializer=kernel_initializer(79),name='Conv40')(x)
     x =  layers.BatchNormalization(name='Batch40')(x)
-    x = level_4 =  ConvRFF_block(x,deepth=32,name='41',kernel_regularizer=k_r,**kwargs_convrff) 
+    x = level_4 =  DefaultConv2D(64,kernel_initializer=kernel_initializer(81),name='Conv41')(x)
     x =  layers.BatchNormalization(name='Batch41')(x)
     x =  DefaultPooling(name='Pool40')(x) # 16x16 -> 8x8
 
-    level_4 = ConvRFF_block(level_4,deepth=64,name='04',kernel_regularizer=k_r,**kwargs_convrff)
+    level_4 =  DefaultConv2D(64,kernel_initializer=kernel_initializer(321),name='Conv04')(level_4)
 
     #Decoder
     x = DefaultConv2D(128,kernel_initializer=kernel_initializer(89),name='Conv50')(x)
@@ -102,12 +97,6 @@ def get_model(input_shape=(128,128,3), name='UNET_RFF',
                         kernel_initializer=kernel_initializer(42),
                         name='Conv100')(x)
 
-    model = Model(input_,x,name=name)
+    model = Model(input_, x, name=name)
 
     return model 
-
-
-
-if __name__ == '__main__':
-    model = get_model()
-    model.summary()
