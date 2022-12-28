@@ -18,7 +18,7 @@ upsample = partial(layers.UpSampling2D, (2,2))
 def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
-def unet(input_shape=(128,128,3), name='b_skips', out_channels=1):
+def get_model(input_shape=(128,128,3), name='b_skips', out_channels=1):
 
     # Encoder 
     input_ = layers.Input(shape=input_shape)
