@@ -26,7 +26,8 @@ def calculate_metrics_table(model, metrics, dataset_class):
     for label in labels:
         if label:
             data = data.filter(lambda x,y,l: l == label)
-        for name_metric,metric in metrics.items():
+        for metric in metrics:
+            name_metric = metric.__class__.__name__
             curr = []
             for x,y,*_ in data:
                 y_pred = model(x)
