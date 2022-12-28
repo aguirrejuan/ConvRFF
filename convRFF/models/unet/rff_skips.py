@@ -8,7 +8,6 @@ from tensorflow.keras import Model, layers, regularizers
 from convRFF.layers import ConvRFF_block
 
 
-
 DefaultConv2D = partial(layers.Conv2D,
                         kernel_size=3, activation='relu', padding="same")
 
