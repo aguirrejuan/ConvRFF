@@ -12,7 +12,7 @@ import tensorflow as tf
 
 
 
-def get_metrics(model, metrics, dataset_class):
+def calculate_metrics_table(model, metrics, dataset_class):
     
     *_, data = get_data(dataset_class, data_augmantation=False,
                                         return_label_info=True)
@@ -64,7 +64,7 @@ def get_train_parameters(dataset_class):
 def train(model, dataset_class, run=None):
     train_parameters = get_train_parameters(dataset_class)
     compile_parameters  = get_compile_parameters()
-    metrics = compile_parameters['metrics']
+    metrics = get_compile_parameters()['metrics']
     model.compile(**compile_parameters)
     model.fit(**train_parameters)
     df_results = calculate_metrics_table(model, metrics, dataset_class)
