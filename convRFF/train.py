@@ -9,6 +9,8 @@ from gcpds.image_segmentation.metrics import (Jaccard,
 
 from convRFF.data import get_data
 import tensorflow as tf 
+import numpy as np 
+import pandas as pd 
 
 
 
@@ -25,17 +27,17 @@ def calculate_metrics_table(model, metrics, dataset_class):
 
     for label in labels:
         if label:
-            data = data.filter(lambda x,y,l: l == label)
+            data = data.filter(lambda x,y,l, id_: l == label)
         for metric in metrics:
             name_metric = metric.__class__.__name__
             curr = []
             for x,y,*_ in data:
                 y_pred = model(x)
-                curr.append(metric().compute(y,y_pred))
+                curr.append(metric.compute(y,y_pred))
             mean = abs(np.mean(curr))
             std = np.std(curr)
-            results.setdefault('label',[]).append(label)
             results.setdefault('metric',[]).append(name_metric)
+            results.setdefault('label',[]).append(label)
             results.setdefault('mean',[]).append(mean)
             results.setdefault('std',[]).append(std)
 
@@ -62,7 +64,7 @@ def get_train_parameters(dataset_class):
     }
 
 
-def train(model, dataset_class, run=None):
+def train_model(model, dataset_class, run=None):
     train_parameters = get_train_parameters(dataset_class)
     compile_parameters  = get_compile_parameters()
     metrics = get_compile_parameters()['metrics']
@@ -72,5 +74,4 @@ def train(model, dataset_class, run=None):
     if run:
         table = wandb.Table(dataframe=df_results)
         run.log({"metrics": table})
-
 
