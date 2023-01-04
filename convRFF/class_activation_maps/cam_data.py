@@ -58,9 +58,12 @@ def save(generator, total_rows, file_path, dtype=DTYPE):
     # Initialize memory-mapped file
     filep = np.memmap(file_path, dtype=dtype, mode='w+', shape=(total_rows,))
     # Iterate over generator, save output to memory-mapped file
+
+    last_init = 0
     for i, data in tqdm(enumerate(generator)):
         chunk_size = len(data[-1])
-        slice_ = slice(i*chunk_size, i*chunk_size + chunk_size)
+        slice_ = slice(last_init, last_init + chunk_size)
+        last_init = (i+1)*chunk_size
         filep[slice_] = list(zip(*data))
     # Flush changes to disk
     filep.flush()
