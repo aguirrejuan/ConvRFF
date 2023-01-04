@@ -34,7 +34,6 @@ def preprocess_data(data, data_augmantation=False,
         data = data.map(data_augmentation, 
                         num_parallel_calls=tf.data.AUTOTUNE)
 
-    data = data.batch(32).prefetch(tf.data.AUTOTUNE)
     return data
 
 
