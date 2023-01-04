@@ -4,9 +4,9 @@ from gcpds.image_segmentation.class_activation_maps import SegScore
 
 
 # Define data type for memory-mapped file
-DTYPE = np.dtype([('info_intance', 'U50', (2,)),  # Unicode string of length 10, shape (2,)
+DTYPE = np.dtype([('info_instance', 'U50', (2,)),  # Unicode string of length 10, shape (2,)
                   ('layer','U50', 1),  # String of length 10
-                  ('targe_class', int, 1),  # Integer of length 1
+                  ('target_class', int, 1),  # Integer of length 1
                   ('cam', np.float32, (128, 128))  # Float of shape (128, 128)
                  ])
 
