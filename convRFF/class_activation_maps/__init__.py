@@ -20,7 +20,9 @@ def get_path_run(run,root_path):
     return folder_path
 
 def load_mmap_data_drive(file_path, dtype):
-    new_file = os.path.basename(file_path)
+    path = os.path.normpath(file_path)
+    separated = path.split(os.sep)
+    new_file = '_'.join(separated)
     if not os.path.exists(new_file):
         shutil.copyfile(file_path, new_file)
     return load_cam_data(new_file, dtype=dtype)
