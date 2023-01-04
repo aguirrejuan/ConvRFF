@@ -21,7 +21,7 @@ setup(
     install_requires=[ 
                      'gdown==4.3.0',
                       'pandas',
-                      'sklearn',
+                      'scikit-learn',
                       'tf-keras-vis @ git+https://github.com/UN-GCPDS/tf-keras-vis.git',
                       'gcpds.image_segmentation @ git+https://github.com/UN-GCPDS/python-gcpds.image_segmentation.git',
                       'scikit-image',
