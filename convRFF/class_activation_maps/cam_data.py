@@ -63,7 +63,7 @@ def save(generator, total_rows, file_path, dtype=DTYPE):
     for i, data in tqdm(enumerate(generator)):
         chunk_size = len(data[-1])
         slice_ = slice(last_init, last_init + chunk_size)
-        last_init = (i+1)*chunk_size
+        last_init += chunk_size 
         filep[slice_] = list(zip(*data))
     # Flush changes to disk
     filep.flush()
