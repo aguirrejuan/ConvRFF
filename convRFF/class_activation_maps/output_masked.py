@@ -45,11 +45,13 @@ def generator_dataset(arr_mmap, class_dataset, batch_size=32):
 def generator_output_model(model, class_data, arr_mmap):
     data  = generator_dataset(arr_mmap, class_data)
     for img, img_masked, mask, info_instance, target_class, layer  in data:
-        y_pred = tf.abs(model.predict(img,verbose=0) - (1-target_class))
-        y_pred = tf.reduce_mean(y_pred*mask, axis=[1,2,3]).numpy()
 
-        o_pred = tf.abs(model.predict(img_masked,verbose=0) - (1-target_class))
-        o_pred = tf.reduce_mean(o_pred*mask,axis=[1,2,3]).numpy()
+        N = tf.reduce_sum(mask, axis=[1,2,3])
+        y_pred = tf.abs(model.predict(img,verbose=0) - (1-target_class))/N
+        y_pred = tf.reduce_sum(y_pred*mask, axis=[1,2,3]).numpy()
+
+        o_pred = tf.abs(model.predict(img_masked,verbose=0) - (1-target_class))/N
+        o_pred = tf.reduce_sum(o_pred*mask,axis=[1,2,3]).numpy()
 
         info_instance = [[i.decode() for i in lists.numpy()] for lists in info_instance]
         layer = [l.numpy().decode() for l in layer]
