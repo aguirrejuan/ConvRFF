@@ -7,7 +7,7 @@ from gcpds.image_segmentation.class_activation_maps import SegScore
 DTYPE = np.dtype([('info_instance', 'U50', (2,)),  # Unicode string of length 10, shape (2,)
                   ('layer','U50', 1),  # String of length 10
                   ('target_class', int, 1),  # Integer of length 1
-                  ('cam', np.float32, (128, 128))  # Float of shape (128, 128)
+                  ('cam', np.float32, (128, 128, 2))  # Float of shape (128, 128)
                  ])
 
 
@@ -31,6 +31,8 @@ def gen_calculate(cam_method, layers, data, target_classes):
             # Convert info instances to list of lists of strings
             info_instance = [[i.decode() for i in lists.numpy()] for lists in info_instance]
             info_instance = list(zip(*info_instance))
+
+            cam_temp = []
             for target_class in target_classes:
                 # Initialize SegScore object with mask and target class
                 seg_score = SegScore(mask,target_class=target_class, logits=True)
@@ -38,11 +40,14 @@ def gen_calculate(cam_method, layers, data, target_classes):
                 cam = cam_method(seg_score, img, penultimate_layer=layer,
                                  seek_penultimate_conv_layer=False,
                                  normalize_cam=False)
-                # Repeat layer and target class for each element in cam
-                layer_ = [layer]*len(cam)
-                target_class_ = [target_class]*len(cam)
-                # Yield tuple of information instances, layers, target classes, and CAMs
-                yield info_instance, layer_, target_class_, [c for c in cam]
+                
+                cam_temp.append(cam[...,None])
+            cam = np.concatenate(cam_temp, axis=-1)
+            # Repeat layer and target class for each element in cam
+            layer_ = [layer]*len(cam)
+            target_class_ = [target_class]*len(cam)
+            # Yield tuple of information instances, layers, target classes, and CAMs
+            yield info_instance, layer_, target_class_, [c for c in cam]
 
 
 def save(generator, total_rows, file_path, dtype=DTYPE):
