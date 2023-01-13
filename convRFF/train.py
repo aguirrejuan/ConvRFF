@@ -16,7 +16,7 @@ import pandas as pd
 
 def calculate_metrics_table(model, metrics, dataset_class):
     
-    *_, data = get_data(dataset_class, data_augmantation=False,
+    *_, data = get_data(dataset_class, data_augmentation=False,
                                         return_label_info=True)
     data = data.unbatch().batch(1)
 
@@ -57,8 +57,8 @@ def get_compile_parameters():
   }
 
 
-def get_train_parameters(dataset_class):
-    train_data, val_data, test_data = get_data(dataset_class)
+def get_train_parameters(dataset_class, data_augmentation=True):
+    train_data, val_data, test_data = get_data(dataset_class, data_augmentation=data_augmentation)
     return {'x':train_data,
             'validation_data':val_data,
             'epochs':200,
@@ -66,8 +66,8 @@ def get_train_parameters(dataset_class):
     }
 
 
-def train(model, dataset_class, run=None):
-    train_parameters = get_train_parameters(dataset_class)
+def train(model, dataset_class, run=None, data_augmentation=True):
+    train_parameters = get_train_parameters(dataset_class,data_augmentation=data_augmentation)
     compile_parameters  = get_compile_parameters()
     metrics = get_compile_parameters()['metrics']
     model.compile(**compile_parameters)
