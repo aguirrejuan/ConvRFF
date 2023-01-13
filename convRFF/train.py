@@ -66,10 +66,12 @@ def get_train_parameters(dataset_class, data_augmentation=True):
     }
 
 
-def train(model, dataset_class, run=None, data_augmentation=True):
+def train(model, dataset_class, run=None, 
+        data_augmentation=True, get_compile_parameters=get_compile_parameters):
+        
     train_parameters = get_train_parameters(dataset_class,data_augmentation=data_augmentation)
     compile_parameters  = get_compile_parameters()
-    metrics = get_compile_parameters()['metrics']
+    metrics = compile_parameters['metrics']
     model.compile(**compile_parameters)
     model.fit(**train_parameters)
     df_results = calculate_metrics_table(model, metrics, dataset_class)
