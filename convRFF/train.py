@@ -31,7 +31,7 @@ def calculate_metrics_table(model, metrics, dataset_class):
         else:
             tem_data = data 
         for metric in metrics:
-            name_metric = metric.__class__.__name__
+            name_metric = metric.name
             curr = []
             for x,y,*_ in tem_data:
                 y_pred = model(x)
@@ -68,7 +68,7 @@ def get_train_parameters(dataset_class, data_augmentation=True):
 
 def train(model, dataset_class, run=None, 
         data_augmentation=True, get_compile_parameters=get_compile_parameters):
-        
+
     train_parameters = get_train_parameters(dataset_class,data_augmentation=data_augmentation)
     compile_parameters  = get_compile_parameters()
     metrics = compile_parameters['metrics']
