@@ -39,17 +39,18 @@ def preprocess_data(data, data_augmantation=False,
 
 
 def get_data(dataset_class, seed=42, data_augmantation=True,
-                return_label_info=False, shape=256):
+                return_label_info=False, shape=256, batch_size=32):
 
     dataset = dataset_class(seed=seed)
     train_data, val_data, test_data = dataset()
 
     train_data = preprocess_data(train_data, data_augmantation, 
-                    return_label_info, shape)
+                    return_label_info, shape).batch(batch_size=batch_size)
 
     val_data = preprocess_data(val_data, False, 
-                                return_label_info, shape)
+                                return_label_info, shape).batch(batch_size=batch_size)
 
     test_data = preprocess_data(test_data, False, 
-                                return_label_info, shape)
+                                return_label_info, shape).batch(batch_size=batch_size)
+            
     return train_data, val_data, test_data
