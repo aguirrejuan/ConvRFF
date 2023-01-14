@@ -26,8 +26,8 @@ def calculate_metrics_table(model, metrics, dataset_class):
     results = {}
 
     for label in labels:
-        if label:
-            tem_data = data.filter(lambda x,y,l, id_: l == label)
+        if label != None:
+            tem_data = data.filter(lambda x,y,l,*id_: l[0] == label)
         else:
             tem_data = data 
         for metric in metrics:
@@ -78,4 +78,5 @@ def train(model, dataset_class, run=None,
     if run:
         table = wandb.Table(dataframe=df_results)
         run.log({"metrics": table})
+
 
