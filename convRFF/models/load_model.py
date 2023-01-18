@@ -1,19 +1,19 @@
 from tensorflow.keras.models import load_model as ld
 from convRFF.layers import ConvRFF
-from gcpds.image_segmentation.losses import Dicecoefficient
+from gcpds.image_segmentation.losses import DiceCoefficient
 from gcpds.image_segmentation.metrics import (Jaccard, 
                                               Sensitivity,
                                               Specificity,
-                                              DicecoefficientMetric
+                                              DiceCoefficientMetric
 )
 
 def load_model(path='model.h5'):
     model = ld(path, custom_objects={'ConvRFF':ConvRFF, 
-                                     'Dicecoefficient':Dicecoefficient,
+                                     'DiceCoefficient':DiceCoefficient,
                                      'Jaccard':Jaccard, 
                                      'Sensitivity':Sensitivity,
                                      'Specificity':Specificity,
-                                     'DicecoefficientMetric':DicecoefficientMetric
+                                     'DiceCoefficientMetric':DiceCoefficientMetric
                                      }
                                      )
     return model 
