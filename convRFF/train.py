@@ -1,10 +1,10 @@
 import wandb
 from wandb.keras import WandbCallback
-from gcpds.image_segmentation.losses import DiceCoeficiente
+from gcpds.image_segmentation.losses import Dicecoefficient
 from gcpds.image_segmentation.metrics import (Jaccard, 
                                               Sensitivity,
                                               Specificity,
-                                              DiceCoeficienteMetric
+                                              DicecoefficientMetric
 )
 
 from convRFF.data import get_data
@@ -12,6 +12,8 @@ import tensorflow as tf
 import numpy as np 
 import pandas as pd 
 
+import logging
+logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
 
 def calculate_metrics_table(model, metrics, dataset_class):
@@ -47,12 +49,12 @@ def calculate_metrics_table(model, metrics, dataset_class):
 
 
 def get_compile_parameters():
-  return {'loss':DiceCoeficiente(),
+  return {'loss':Dicecoefficient(),
           'optimizer':tf.keras.optimizers.Adam(learning_rate=1e-3),
           'metrics':[Jaccard(), 
                      Sensitivity(), 
                      Specificity(),
-                     DiceCoeficienteMetric()
+                     DicecoefficientMetric()
                      ]
   }
 

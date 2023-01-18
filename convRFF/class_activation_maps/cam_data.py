@@ -25,6 +25,8 @@ def gen_calculate(cam_method, layers, data, target_classes):
     Yields:
         tuple: information instances, layers, target classes, and CAMs
     """
+
+    first_time = True 
     for layer in layers:
         cam_per_instance = []
         total_info_instance = []
@@ -44,10 +46,13 @@ def gen_calculate(cam_method, layers, data, target_classes):
                 
                 cam_temp_target.append(cam[...,None])
             cam_temp_target = np.concatenate(cam_temp_target, axis=-1)
-            cam_per_instance.append(cam_temp_target)
+            if first_time:
+                cam_per_instance = cam_temp_target
+                first_time = False
+            else: 
+                cam_per_instance = np.concatenate([cam_per_instance,cam_temp_target], axis=0)
             total_info_instance.extend(info_instance)
-
-        cam_per_instance = np.concatenate(cam_per_instance, axis=0)
+        #cam_per_instance = np.concatenate(cam_per_instance, axis=0)
         yield total_info_instance, layer, cam_per_instance
 
 
