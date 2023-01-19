@@ -26,8 +26,9 @@ def gen_calculate(cam_method, layers, data, target_classes):
         tuple: information instances, layers, target classes, and CAMs
     """
 
-    first_time = True 
+     
     for layer in layers:
+        first_time = True
         cam_per_instance = []
         total_info_instance = []
         for img, mask, *info_instance in data:
