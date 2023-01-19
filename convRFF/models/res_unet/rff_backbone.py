@@ -64,7 +64,7 @@ def res_block_convRFF(x, deepth=16, name='10',
 
 
 def get_model(input_shape=(128,128,3), 
-             name='RES_UNET', out_channels=1,
+             name='RES_UNET_RFF', out_channels=1,
               out_ActFunction='sigmoid',
               kernel_regularizer=None, **kwargs_convrff):
 

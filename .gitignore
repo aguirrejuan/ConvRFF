@@ -1,7 +1,9 @@
 __pycache__
 *.py[cod]
 
-.env 
+.env* 
 nerviosUTP
 model.h5
 .vscode
+build
+*egg-info*

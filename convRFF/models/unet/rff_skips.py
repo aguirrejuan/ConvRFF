@@ -20,7 +20,7 @@ def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
 
-def get_model(input_shape=(128,128,3), name='UNET_RFF', out_channels=1,trainable_W=True,
+def get_model(input_shape=(128,128,3), name='UNET_RFF', out_channels=1,
                  **kwargs_convRFF):
 
     # Encoder 
