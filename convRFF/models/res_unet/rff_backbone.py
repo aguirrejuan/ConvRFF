@@ -3,7 +3,7 @@ https://github.com/cralji/RFF-Nerve-UTP/blob/main/Res-UNET_Nerve-UTP.ipynb
 """
 
 from tensorflow.keras import Model, layers, initializers
-from convRFF.models import ConvRFF_block
+from ConvRFF.layers import ConvRFF_block
 
 def kernel_initializer(seed):
     return initializers.GlorotUniform(seed=seed)
