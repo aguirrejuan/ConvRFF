@@ -58,14 +58,14 @@ def gen_calculate(cam_method, layers, data, target_classes):
 
 
 def save_mimic_mmap(generator, file_path, dtype):
-    filep = mimic_mmap(file_name, dtype=dtype, mode='w+')
+    filep = mimic_mmap(file_path, dtype=dtype, mode='w+')
     for data in tqdm(enumerate(generator)):
         infor_instances, layer, infor_instances 
         filep[layer] = infor_instances, infor_instances
 
 
 def load_mimic_mmap(file_path, dtype):
-    filep = mimic_mmap(file_name, dtype=dtype, mode='r')
+    filep = mimic_mmap(file_path, dtype=dtype, mode='r')
     return filep
 
 
