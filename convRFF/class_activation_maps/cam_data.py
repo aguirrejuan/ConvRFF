@@ -1,7 +1,7 @@
 import numpy as np 
 from tqdm import tqdm
 from gcpds.image_segmentation.class_activation_maps import SegScore
-
+from convRFF.data_class import mimic_mmap
 
 # Define data type for memory-mapped file
 DTYPE = np.dtype([('info_instance', 'U50', (1188,2)),  
@@ -57,7 +57,19 @@ def gen_calculate(cam_method, layers, data, target_classes):
         yield total_info_instance, layer, cam_per_instance
 
 
-def save(generator, total_rows, file_path, dtype=DTYPE):
+def save_mimic_mmap(generator, file_path, dtype):
+    filep = mimic_mmap(file_name, dtype=dtype, mode='w+')
+    for data in tqdm(enumerate(generator)):
+        infor_instances, layer, infor_instances 
+        filep[layer] = infor_instances, infor_instances
+
+
+def load_mimic_mmap(file_path, dtype):
+    filep = mimic_mmap(file_name, dtype=dtype, mode='r')
+    return filep
+
+
+def save_memmap(generator, total_rows, file_path, dtype=DTYPE):
     """
     Save output of generator to memory-mapped file at specified file path.
 
@@ -77,7 +89,7 @@ def save(generator, total_rows, file_path, dtype=DTYPE):
     filep.flush()
 
 
-def load(file_path, dtype=DTYPE):
+def load_memmap(file_path, dtype=DTYPE):
     """
     Load memory-mapped file from specified file path.
 
