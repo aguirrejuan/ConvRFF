@@ -10,10 +10,12 @@ from gcpds.image_segmentation.metrics import (Jaccard,
 def load_model(path='model.h5'):
     model = ld(path, custom_objects={'ConvRFF':ConvRFF, 
                                      'DiceCoefficient':DiceCoefficient,
+                                     'DiceCoeficiente':DiceCoefficient,
                                      'Jaccard':Jaccard, 
                                      'Sensitivity':Sensitivity,
                                      'Specificity':Specificity,
-                                     'DiceCoefficientMetric':DiceCoefficientMetric
+                                     'DiceCoefficientMetric':DiceCoefficientMetric,
+                                     'DiceCoeficienteMetric':DiceCoefficientMetric
                                      }
                                      )
     return model 
