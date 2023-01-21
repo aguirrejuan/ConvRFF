@@ -32,8 +32,11 @@ class DataWrite:
     def __setitem__(self, key, value):
         file_name = os.path.join(self.file_name, f'{key}.npy')
         array = np.array(value, self.dtype)
-        with open(file_name, 'wb') as f:
-            np.save(f, array)
+        if not os.path.exists(file_name):
+            with open(file_name, 'wb') as f:
+                np.save(f, array)
+        else: 
+            print(f'File {file_name} already exists, skipping it')
 
 
 
