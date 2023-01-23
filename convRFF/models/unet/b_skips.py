@@ -18,7 +18,7 @@ upsample = partial(layers.UpSampling2D, (2,2))
 def kernel_initializer(seed):
     return tf.keras.initializers.GlorotUniform(seed=seed)
 
-def get_model(input_shape=(128,128,3), name='b_skips', out_channels=1):
+def get_model(input_shape=(128,128,3), name='b_skips', out_channels=1, mul_dim=1):
 
     # Encoder 
     input_ = layers.Input(shape=input_shape)
@@ -31,7 +31,7 @@ def get_model(input_shape=(128,128,3), name='b_skips', out_channels=1):
     x =  layers.BatchNormalization(name='Batch11')(x)
     x = DefaultPooling(name='Pool10')(x) # 128x128 -> 64x64
 
-    level_1 =  DefaultConv2D(8,kernel_initializer=kernel_initializer(3321),name='Conv01')(level_1)
+    level_1 =  DefaultConv2D(8*mul_dim,kernel_initializer=kernel_initializer(3321),name='Conv01')(level_1)
 
     x =  DefaultConv2D(16,kernel_initializer=kernel_initializer(56),name='Conv20')(x)
     x =  layers.BatchNormalization(name='Batch20')(x)
@@ -39,7 +39,7 @@ def get_model(input_shape=(128,128,3), name='b_skips', out_channels=1):
     x =  layers.BatchNormalization(name='Batch22')(x)
     x = DefaultPooling(name='Pool20')(x) # 64x64 -> 32x32
 
-    level_2 =  DefaultConv2D(16,kernel_initializer=kernel_initializer(321),name='Conv02')(level_2)
+    level_2 =  DefaultConv2D(16*mul_dim,kernel_initializer=kernel_initializer(321),name='Conv02')(level_2)
 
     x =  DefaultConv2D(32,kernel_initializer=kernel_initializer(87),name='Conv30')(x)
     x =  layers.BatchNormalization(name='Batch30')(x)
@@ -47,7 +47,7 @@ def get_model(input_shape=(128,128,3), name='b_skips', out_channels=1):
     x =  layers.BatchNormalization(name='Batch31')(x)
     x = DefaultPooling(name='Pool30')(x) # 32x32 -> 16x16
 
-    level_3 =  DefaultConv2D(32,kernel_initializer=kernel_initializer(32211),name='Conv03')(level_3)
+    level_3 =  DefaultConv2D(32*mul_dim,kernel_initializer=kernel_initializer(32211),name='Conv03')(level_3)
 
     x = DefaultConv2D(64,kernel_initializer=kernel_initializer(79),name='Conv40')(x)
     x =  layers.BatchNormalization(name='Batch40')(x)
@@ -55,7 +55,7 @@ def get_model(input_shape=(128,128,3), name='b_skips', out_channels=1):
     x =  layers.BatchNormalization(name='Batch41')(x)
     x =  DefaultPooling(name='Pool40')(x) # 16x16 -> 8x8
 
-    level_4 =  DefaultConv2D(64,kernel_initializer=kernel_initializer(321),name='Conv04')(level_4)
+    level_4 =  DefaultConv2D(64*mul_dim,kernel_initializer=kernel_initializer(321),name='Conv04')(level_4)
 
     #Decoder
     x = DefaultConv2D(128,kernel_initializer=kernel_initializer(89),name='Conv50')(x)
