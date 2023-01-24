@@ -7,7 +7,7 @@ from convRFF.models.res_unet import upsample_conv, DefaultConv2D, kernel_initial
 
 
 def get_model(input_shape=(128,128,3), name='RES_UNET', out_channels=1, out_ActFunction='sigmoid',
-            kernel_regularizer=None ):
+            kernel_regularizer=None, mul_dim=1 ):
 
     # Encoder 
     kr = kernel_regularizer#regularizers.L1L2(l1=1e-5, l2=1e-4)
@@ -18,22 +18,22 @@ def get_model(input_shape=(128,128,3), name='RES_UNET', out_channels=1, out_ActF
     pp_in_layer = layers.BatchNormalization()(pp_in_layer)
     c1 = res_block(pp_in_layer,8,kernel_initializer=kernel_initializer(34),kernel_regularizer=kr,name='Res00')
     c1 = res_block(c1,8,kernel_initializer=kernel_initializer(3),kernel_regularizer=kr,name='Res01')
-    level_1 =  DefaultConv2D(8,kernel_initializer=kernel_initializer(3321),kernel_regularizer=kr,name='Conv01')(c1)
+    level_1 =  DefaultConv2D(8*mul_dim,kernel_initializer=kernel_initializer(3321),kernel_regularizer=kr,name='Conv01')(c1)
     p1 = layers.MaxPooling2D((2, 2),name='Maxp00') (c1)
 
     c2 = res_block(p1,16,kernel_initializer=kernel_initializer(7),kernel_regularizer=kr,name='Res02')
     c2 = res_block(c2,16,kernel_initializer=kernel_initializer(98),kernel_regularizer=kr,name='Res03')
-    level_2 =  DefaultConv2D(16,kernel_initializer=kernel_initializer(23),kernel_regularizer=kr,name='Conv02')(c2)
+    level_2 =  DefaultConv2D(16*mul_dim,kernel_initializer=kernel_initializer(23),kernel_regularizer=kr,name='Conv02')(c2)
     p2 = layers.MaxPooling2D((2, 2),name='Maxp01') (c2)
 
     c3 = res_block(p2,32,kernel_initializer=kernel_initializer(5),kernel_regularizer=kr,name='Res04')
     c3 = res_block(c3,32,kernel_initializer=kernel_initializer(23),kernel_regularizer=kr,name='Res05')
-    level_3 =  DefaultConv2D(32,kernel_initializer=kernel_initializer(343),kernel_regularizer=kr,name='Conv03')(c3)
+    level_3 =  DefaultConv2D(32*mul_dim,kernel_initializer=kernel_initializer(343),kernel_regularizer=kr,name='Conv03')(c3)
     p3 = layers.MaxPooling2D((2, 2),name='Maxp02') (c3)
 
     c4 = res_block(p3,64,kernel_initializer=kernel_initializer(32),kernel_regularizer=kr,name='Res06')
     c4 = res_block(c4,64,kernel_initializer=kernel_initializer(43),kernel_regularizer=kr,name='Res07')
-    level_4 =  DefaultConv2D(64,kernel_initializer=kernel_initializer(65),kernel_regularizer=kr,name='Conv04')(c4)
+    level_4 =  DefaultConv2D(64*mul_dim,kernel_initializer=kernel_initializer(65),kernel_regularizer=kr,name='Conv04')(c4)
     p4 = layers.MaxPooling2D(pool_size=(2, 2),name='Maxp03') (c4)
 
     # Bottle Neck

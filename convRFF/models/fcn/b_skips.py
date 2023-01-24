@@ -9,7 +9,7 @@ from convRFF.models.fcn import DefaultConv2D, kernel_initializer, DefaultPooling
 
 
 def get_model(input_shape=(128,128,3), name='FCN', out_channels=1, out_ActFunction='sigmoid',
-              kernel_regularizer=None):
+              kernel_regularizer=None, mul_dim=1):
     # Encoder 
     k_r = kernel_regularizer
     input_ = layers.Input(shape=input_shape)
@@ -31,14 +31,14 @@ def get_model(input_shape=(128,128,3), name='FCN', out_channels=1, out_ActFuncti
     x =  layers.BatchNormalization(name='Batch30')(x)
     x = level_1 = DefaultPooling(name='Pool30')(x) # 32x32 -> 16x16
 
-    level_1 = DefaultConv2D(64,kernel_initializer=kernel_initializer(343),kernel_regularizer=k_r,name='Conv01')(level_1)
+    level_1 = DefaultConv2D(64*mul_dim,kernel_initializer=kernel_initializer(343),kernel_regularizer=k_r,name='Conv01')(level_1)
 
     x =  DefaultConv2D(128,kernel_initializer=kernel_initializer(67),kernel_regularizer=k_r,name='Conv40')(x)
     x =  DefaultConv2D(128,kernel_initializer=kernel_initializer(89),kernel_regularizer=k_r,name='Conv41')(x)
     x =  layers.BatchNormalization(name='Batch40')(x)
     x = level_2 = DefaultPooling(name='Pool40')(x) # 16x16 -> 8x8
 
-    level_2 = DefaultConv2D(128,kernel_initializer=kernel_initializer(343),kernel_regularizer=k_r,name='Conv02')(level_2)
+    level_2 = DefaultConv2D(128*mul_dim,kernel_initializer=kernel_initializer(343),kernel_regularizer=k_r,name='Conv02')(level_2)
 
     x =  DefaultConv2D(256,kernel_initializer=kernel_initializer(7),kernel_regularizer=k_r,name='Conv50')(x)
     x =  DefaultConv2D(256,kernel_initializer=kernel_initializer(23),kernel_regularizer=k_r,name='Conv51')(x)
