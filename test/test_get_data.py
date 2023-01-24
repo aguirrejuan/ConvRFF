@@ -5,10 +5,15 @@ from gcpds.image_segmentation.datasets.segmentation import InfraredThermalFeet
 from convRFF.data import get_data
 
 train, val, test = get_data(InfraredThermalFeet, flip_up_down=False, batch_size=1,
-                            range_rotate=(-10,10))
+                            flip_left_right=False, 
+                            range_rotate=(0,0),
+                            translation_h_w=(0.2,0.2),
+                            zoom_h_w=(0.2,0.2),
+                            split=[0.1,0.2]
+                            )
 
 
-for x,y in train:
+for x,y in val:
     x = np.squeeze(x)
     y = np.squeeze(y)
 
