@@ -19,7 +19,8 @@ logging.getLogger("tensorflow").setLevel(logging.ERROR)
 def calculate_metrics_table(model, metrics, dataset_class,**kwargs_data_augmentation):
     
     *_, data = get_data(dataset_class, data_augmentation=False,
-                                        return_label_info=True)
+                                        return_label_info=True,
+                                        **kwargs_data_augmentation)
     data = data.unbatch().batch(1)
 
     labels = getattr(dataset_class(), "labels_info", None)
