@@ -16,7 +16,7 @@ import logging
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
 
-def calculate_metrics_table(model, metrics, dataset_class):
+def calculate_metrics_table(model, metrics, dataset_class,**kwargs_data_augmentation):
     
     *_, data = get_data(dataset_class, data_augmentation=False,
                                         return_label_info=True)
@@ -76,7 +76,7 @@ def train(model, dataset_class, run=None,
     metrics = get_compile_parameters()['metrics']
     model.compile(**compile_parameters)
     model.fit(**train_parameters)
-    df_results = calculate_metrics_table(model, metrics, dataset_class)
+    df_results = calculate_metrics_table(model, metrics, dataset_class,**kwargs_data_augmentation)
     if run:
         table = wandb.Table(dataframe=df_results)
         run.log({"metrics": table})
