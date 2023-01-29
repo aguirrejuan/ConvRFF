@@ -19,18 +19,21 @@ def random_translation(img,mask,translation_h_w):
     return img, mask 
 
 
-@tf.function
-def random_zoom(img, mask, zoom_h_w):
+
+def random_zoom(zoom_h_w):
     zoom1 = tf.keras.layers.RandomZoom(height_factor=zoom_h_w[0],
                                                      width_factor=zoom_h_w[1], 
                                                      seed=lambda: 42, fill_mode='nearest')
-
     zoom2 = tf.keras.layers.RandomZoom(height_factor=zoom_h_w[0],
                                                      width_factor=zoom_h_w[1], 
                                                      seed=lambda: 42, fill_mode='constant')
-    img = zoom1(img)
-    mask = zoom2(mask)
-    return img, mask
+
+    def random_z(img, mask):
+        img = zoom1(img)
+        mask = zoom2(mask)
+        return img, mask
+
+    return random_z
 
 
 
@@ -61,7 +64,7 @@ def data_augmentation_func(flip_left_right=True,
             img, mask = random_translation(img, mask, translation_h_w)
         
         if zoom_h_w:
-            img, mask = random_zoom(img, mask, zoom_h_w)
+            img, mask = random_zoom(zoom_h_w)(img, mask)
 
         return img, mask
 
