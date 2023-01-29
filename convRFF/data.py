@@ -15,25 +15,29 @@ def random_translation(img,mask,translation_h_w):
     dx = tf.random.uniform(shape=(), minval=-dx, maxval=dx, dtype=tf.int32)
     dy = tf.random.uniform(shape=(), minval=-dy, maxval=dy, dtype=tf.int32)
     img = tfa.image.translate(img, [dx,dy], fill_mode='nearest')
-    mask = tfa.image.translate(img, [dx,dy],fill_mode='constant')
+    mask = tfa.image.translate(mask, [dx,dy],fill_mode='constant')
     return img, mask 
 
 
 
-def random_zoom(zoom_h_w):
-    zoom1 = tf.keras.layers.RandomZoom(height_factor=zoom_h_w[0],
-                                                     width_factor=zoom_h_w[1], 
-                                                     seed=42, fill_mode='nearest')
-    zoom2 = tf.keras.layers.RandomZoom(height_factor=zoom_h_w[0],
-                                                     width_factor=zoom_h_w[1], 
-                                                     seed=42, fill_mode='constant')
+def random_zoom(img,mask, zoom_h_w):
+    img_shape =tf.shape(img)[-3:-1]
+    
+    h = tf.cast(img_shape[0], tf.float32)
+    h = tf.cast(h*zoom_h_w[0],tf.int32)
+    h = tf.random.uniform(shape=(), minval=-h, maxval=h, dtype=tf.int32)
 
-    def random_z(img, mask):
-        img = zoom1(img)
-        mask = zoom2(mask)
-        return img, mask
+    w = tf.cast(img_shape[1], tf.float32)
+    w = tf.cast(w*zoom_h_w[1],tf.int32)
+    w = tf.random.uniform(shape=(), minval=-w, maxval=w, dtype=tf.int32)
 
-    return random_z
+    img = tf.image.resize_with_crop_or_pad(img, img_shape[0]+h,  img_shape[1]+w )
+    mask = tf.image.resize_with_crop_or_pad(mask, img_shape[0]+h,  img_shape[1]+w)
+
+    img = tf.image.resize(img, img_shape)
+    mask = tf.image.resize(mask, img_shape)
+    
+    return img, mask
 
 
 
@@ -64,7 +68,7 @@ def data_augmentation_func(flip_left_right=True,
             img, mask = random_translation(img, mask, translation_h_w)
         
         if zoom_h_w:
-            img, mask = random_zoom(zoom_h_w)(img, mask)
+            img, mask = random_zoom(img, mask,zoom_h_w)
 
         return img, mask
 
