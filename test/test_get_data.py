@@ -2,9 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np 
 
 from gcpds.image_segmentation.datasets.segmentation import InfraredThermalFeet
+from gcpds.image_segmentation.datasets.segmentation import NerveUtp
 from convRFF.data import get_data
 
-train, val, test = get_data(InfraredThermalFeet, flip_up_down=False, batch_size=1,
+train, val, test = get_data(NerveUtp, flip_up_down=False, batch_size=1,
                             flip_left_right=False, 
                             range_rotate=(-50,50),
                             #translation_h_w=(0.2,0.2),

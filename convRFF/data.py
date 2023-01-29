@@ -156,5 +156,5 @@ def get_data(dataset_class, seed=42,
                                 return_label_info,
                                 shape
                                 ).batch(batch_size=batch_size)
-            
+    
     return train_data, val_data, test_data

@@ -63,6 +63,7 @@ def get_compile_parameters():
 def get_train_parameters(dataset_class, data_augmentation=True, **kwargs_data_augmentation):
     train_data, val_data, test_data = get_data(dataset_class, data_augmentation=data_augmentation, **kwargs_data_augmentation)
     return {'x':train_data,
+            'optimizer':tf.keras.optimizers.Adam(learning_rate=1e-3),
             'validation_data':val_data,
             'epochs':200,
             'callbacks':[WandbCallback(save_model=True)],
