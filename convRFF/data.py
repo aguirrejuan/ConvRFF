@@ -23,11 +23,11 @@ def random_translation(img,mask,translation_h_w):
 def random_zoom(img, mask, zoom_h_w):
     zoom1 = tf.keras.layers.RandomZoom(height_factor=zoom_h_w[0],
                                                      width_factor=zoom_h_w[1], 
-                                                     seed=42, fill_mode='nearest')
+                                                     seed=lambda: 42, fill_mode='nearest')
 
     zoom2 = tf.keras.layers.RandomZoom(height_factor=zoom_h_w[0],
                                                      width_factor=zoom_h_w[1], 
-                                                     seed=42, fill_mode='constant')
+                                                     seed=lambda: 42, fill_mode='constant')
     img = zoom1(img)
     mask = zoom2(mask)
     return img, mask
