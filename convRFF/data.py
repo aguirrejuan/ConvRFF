@@ -14,8 +14,8 @@ def random_translation(img,mask,translation_h_w):
     dy =  tf.cast(shape_img[-3]*translation_h_w[0],tf.int32)
     dx = tf.random.uniform(shape=(), minval=-dx, maxval=dx, dtype=tf.int32)
     dy = tf.random.uniform(shape=(), minval=-dy, maxval=dy, dtype=tf.int32)
-    img = tfa.image.translate(img, [dx,dy], fill_mode,'nearest')
-    mask = tfa.image.translate(img, [dx,dy],fill_mode,'constant')
+    img = tfa.image.translate(img, [dx,dy], fill_mode='nearest')
+    mask = tfa.image.translate(img, [dx,dy],fill_mode='constant')
     return img, mask 
 
 
