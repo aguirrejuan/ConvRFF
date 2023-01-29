@@ -1,6 +1,6 @@
 import tensorflow as tf 
 import numpy as np 
-
+import tensorflow_addons as tfa
 
 def resize(shape=(256,256)):
     def func(img,mask):
@@ -37,24 +37,6 @@ def random_zoom(img, mask, zoom_h_w):
 
 
 
-def random_rotation(img,mask,range_rotate):
-    min_val = range_rotate[0]/360
-    max_val = range_rotate[1]/360
-    range_rotate = [min_val,max_val]
-    img = tf.keras.layers.RandomRotation(range_rotate,fill_mode='reflect',
-                                         interpolation='bilinear',
-                                         seed=42,
-                                         fill_value=0.0)(img)
-    mask = tf.keras.layers.RandomRotation(range_rotate,fill_mode='constant',
-                                         interpolation='bilinear',
-                                         seed=42,
-                                         fill_value=0.0)(mask)
-
-    return img, mask
-    
-
-
-
 def data_augmentation_func(flip_left_right=True, 
                             flip_up_down=True, range_rotate=(-10,10), 
                             translation_h_w=None, zoom_h_w=None):
@@ -72,7 +54,11 @@ def data_augmentation_func(flip_left_right=True,
             mask = tf.image.stateless_random_flip_up_down(mask, seed)
 
         if range_rotate:
-            img, mask = random_rotation(img,mask,range_rotate)
+            min_val = range_rotate[0]/180*np.pi
+            max_val = range_rotate[1]/180*np.pi
+            rotation = tf.random.uniform(shape=(), minval=min_val, maxval=max_val, dtype=tf.float32)
+            img = tfa.image.rotate(img, rotation, fill_mode='reflect')
+            mask = tfa.image.rotate(mask, rotation, fill_mode='constant')
 
         if translation_h_w:    
             img, mask = random_translation(img, mask, translation_h_w)
