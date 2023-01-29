@@ -143,18 +143,18 @@ def get_data(dataset_class, seed=42,
                     range_rotate=range_rotate,
                     translation_h_w=translation_h_w,
                     zoom_h_w=zoom_h_w,
-                    ).batch(batch_size=batch_size)
+                    ).batch(batch_size=batch_size).prefetch(tf.data.AUTOTUNE)
 
     val_data = preprocess_data(
                                 val_data, False, 
                                 return_label_info, 
                                 shape
-                                ).batch(batch_size=batch_size)
+                                ).batch(batch_size=batch_size).prefetch(tf.data.AUTOTUNE)
 
     test_data = preprocess_data(
                                 test_data, False, 
                                 return_label_info,
                                 shape
-                                ).batch(batch_size=batch_size)
+                                ).batch(batch_size=batch_size).prefetch(tf.data.AUTOTUNE)
     
     return train_data, val_data, test_data
