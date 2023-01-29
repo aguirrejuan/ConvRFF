@@ -9,7 +9,7 @@ def resize(shape=(256,256)):
 
 
 def random_translation(img,mask,translation_h_w):
-    shape_img = tf.cast(tf.shape(image),tf.float32)
+    shape_img = tf.cast(tf.shape(img),tf.float32)
     dx = tf.cast(shape_img[-2]*translation_h_w[1],tf.int32)
     dy =  tf.cast(shape_img[-3]*translation_h_w[0],tf.int32)
     dx = tf.random.uniform(shape=(), minval=-dx, maxval=dx, dtype=tf.int32)
