@@ -38,8 +38,8 @@ def random_zoom(img, mask, zoom_h_w):
 
 
 def random_rotation(img,mask,range_rotate):
-    min_val = range_rotate[0]/180*np.pi
-    max_val = range_rotate[1]/180*np.pi
+    min_val = range_rotate[0]/360
+    max_val = range_rotate[1]/360
     range_rotate = [min_val,max_val]
     img = tf.keras.layers.RandomRotation(range_rotate,fill_mode='reflect',
                                          interpolation='bilinear',

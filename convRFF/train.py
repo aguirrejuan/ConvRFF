@@ -12,8 +12,6 @@ import tensorflow as tf
 import numpy as np 
 import pandas as pd 
 
-import logging
-logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
 
 def calculate_metrics_table(model, metrics, dataset_class,**kwargs_data_augmentation):
