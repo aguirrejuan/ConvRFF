@@ -19,6 +19,7 @@ def random_translation(img,mask,translation_h_w):
     return img, mask 
 
 
+@tf.function
 def random_zoom(img, mask, zoom_h_w):
     zoom1 = tf.keras.layers.RandomZoom(height_factor=zoom_h_w[0],
                                                      width_factor=zoom_h_w[1], 
