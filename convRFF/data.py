@@ -9,17 +9,13 @@ def resize(shape=(256,256)):
 
 
 def random_translation(img,mask,translation_h_w):
-    translation1 = tf.keras.layers.RandomTranslation(height_factor=translation_h_w[0],
-                                                     width_factor=translation_h_w[1], 
-                                                     seed=42, fill_mode='nearest')
-
-    translation2 = tf.keras.layers.RandomTranslation(height_factor=translation_h_w[0],
-                                                     width_factor=translation_h_w[1], 
-                                                     seed=42, fill_mode='constant')
-
-    img = translation1(img)
-    mask = translation2(mask)
-
+    shape_img = tf.cast(tf.shape(image),tf.float32)
+    dx = tf.cast(shape_img[-2]*translation_h_w[1],tf.int32)
+    dy =  tf.cast(shape_img[-3]*translation_h_w[0],tf.int32)
+    dx = tf.random.uniform(shape=(), minval=-dx, maxval=dx, dtype=tf.int32)
+    dy = tf.random.uniform(shape=(), minval=-dy, maxval=dy, dtype=tf.int32)
+    img = tfa.image.translate(img, [dx,dy], fill_mode,'nearest')
+    mask = tfa.image.translate(img, [dx,dy],fill_mode,'constant')
     return img, mask 
 
 
