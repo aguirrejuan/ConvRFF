@@ -146,15 +146,17 @@ def get_data(dataset_class, seed=42,
                     ).batch(batch_size=batch_size).prefetch(tf.data.AUTOTUNE)
 
     val_data = preprocess_data(
-                                val_data, False, 
-                                return_label_info, 
-                                shape
+                                val_data,
+                                data_augmentation=False, 
+                                return_label_info=return_label_info, 
+                                shape=shape,
                                 ).batch(batch_size=batch_size).prefetch(tf.data.AUTOTUNE)
 
     test_data = preprocess_data(
-                                test_data, False, 
-                                return_label_info,
-                                shape
+                                test_data,
+                                data_augmentation=False, 
+                                return_label_info=return_label_info, 
+                                shape=shape,
                                 ).batch(batch_size=batch_size).prefetch(tf.data.AUTOTUNE)
     
     return train_data, val_data, test_data
