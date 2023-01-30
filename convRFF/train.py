@@ -68,7 +68,7 @@ def get_train_parameters(dataset_class, data_augmentation=True, **kwargs_data_au
 
 
 def train(model, dataset_class, run=None, 
-        data_augmentation=True, get_compile_parameters=get_compile_parameters, **kwargs_data_augmentation):
+        data_augmentation=True, get_compile_parameters=get_compile_parameters,get_train_parameters=get_train_parameters, **kwargs_data_augmentation):
 
     train_parameters = get_train_parameters(dataset_class,data_augmentation=data_augmentation,**kwargs_data_augmentation)
     compile_parameters  = get_compile_parameters()
