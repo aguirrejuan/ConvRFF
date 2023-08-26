@@ -58,19 +58,27 @@ def get_compile_parameters():
   }
 
 
-def get_train_parameters(dataset_class, data_augmentation=True, **kwargs_data_augmentation):
+def get_train_parameters(dataset_class, data_augmentation=True,validation=True, **kwargs_data_augmentation):
     train_data, val_data, test_data = get_data(dataset_class, data_augmentation=data_augmentation, **kwargs_data_augmentation)
-    return {'x':train_data,
+    params = {'x':train_data,
             'validation_data':val_data,
             'epochs':200,
-            'callbacks':[WandbCallback(save_model=True)],
-    }
+            'callbacks':[WandbCallback(save_model=True)],}
+    if not validation:
+      params.pop('validation_data')
+    return params
 
 
 def train(model, dataset_class, run=None, 
-        data_augmentation=True, get_compile_parameters=get_compile_parameters,get_train_parameters=get_train_parameters, **kwargs_data_augmentation):
+        data_augmentation=True, 
+        get_compile_parameters=get_compile_parameters,
+        get_train_parameters=get_train_parameters,
+          validation=True,
+          **kwargs_data_augmentation):
 
-    train_parameters = get_train_parameters(dataset_class,data_augmentation=data_augmentation,**kwargs_data_augmentation)
+    train_parameters = get_train_parameters(dataset_class,data_augmentation=data_augmentation,
+                                            validation=validation,
+                                            **kwargs_data_augmentation)
     compile_parameters  = get_compile_parameters()
     metrics = get_compile_parameters()['metrics']
     model.compile(**compile_parameters)
