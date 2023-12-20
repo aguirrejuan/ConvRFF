@@ -6,7 +6,7 @@ import numpy as np
 class DataRead:
     def __init__(self, file_name):
         self.file_name = file_name
-        self._files_name = glob(os.path.join(self.file_name,'*'))
+        self._files_name = glob(os.path.join(self.file_name,'*.npy*'))
         self._keys = {}
         for fp in self._files_name:
             key = os.path.basename(fp).split('.')[0]
